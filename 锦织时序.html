@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>锦织时序 · Brocade Chronicle — 江南织锦纹样数字档案馆</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23131F38'/%3E%3Cpath d='M14 18h36v6H14zM14 30h36v4H14zM14 42h36v6H14z' fill='%23C9A96A'/%3E%3Cpath d='M32 8v48' stroke='%23C9A96A' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+<style>
+/* ===== 设计令牌 ===== */
+:root{
+  --bg:#121D33;
+  --bg2:#1A2947;
+  --bg3:#223357;
+  --card:#1E2E4F;
+  --card2:#25375C;
+  --gold:#C9A96A;
+  --gold-soft:#E6CE97;
+  --gold-deep:#8C6F3A;
+  --cinnabar:#C0563F;
+  --cinnabar-deep:#8E3B2A;
+  --paper:#F3ECDC;
+  --ink:#E8E1CE;
+  --text2:#9DAEC8;
+  --text3:#6C7E9E;
+  --line:rgba(201,169,106,.28);
+  --line-soft:rgba(157,174,200,.16);
+  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --shadow:0 14px 40px rgba(5,10,25,.45);
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #20355F 0%, transparent 60%),
+    radial-gradient(900px 500px at 100% 100%, #1A2A4C 0%, transparent 55%),
+    #0E1730;
+  display:flex;justify-content:center;align-items:stretch;
+  -webkit-font-smoothing:antialiased;
+}
+/* ===== App 容器：手机上全屏，桌面上呈手机形态 ===== */
+#app{
+  position:relative;width:100%;max-width:480px;height:100dvh;
+  background:linear-gradient(180deg,var(--bg) 0%,#101A32 100%);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+}
+@media(min-width:560px){
+  body{padding:20px 0;align-items:center}
+  #app{border-radius:30px;border:1px solid var(--line);box-shadow:var(--shadow);height:min(880px,94dvh)}
+}
+/* 织锦经纬纹理（浅层装饰） */
+#app::before{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background:
+    repeating-linear-gradient(0deg, rgba(201,169,106,.035) 0 1px, transparent 1px 6px),
+    repeating-linear-gradient(90deg, rgba(201,169,106,.025) 0 1px, transparent 1px 6px);
+}
+/* ===== 主内容滚动区 ===== */
+#main{flex:1;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1;scrollbar-width:none}
+#main::-webkit-scrollbar{display:none}
+.view{display:none;padding-bottom:88px}
+.view.active{display:block;animation:viewIn .45s cubic-bezier(.22,.8,.32,1) both}
+@keyframes viewIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+/* ===== 通用组件 ===== */
+.section-title{display:flex;align-items:baseline;gap:12px;padding:26px 20px 14px}
+.section-title .zh{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--paper);letter-spacing:.12em}
+.section-title .en{font-family:var(--serif);font-size:11px;color:var(--gold);letter-spacing:.28em;text-transform:uppercase}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.card{
+  background:linear-gradient(160deg,var(--card) 0%,#1A2945 100%);
+  border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:16px;position:relative;overflow:hidden;
+  transition:transform .18s ease,border-color .18s ease;
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--gold),transparent);opacity:.7}
+.card:active{transform:scale(.985)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:3px 10px;letter-spacing:.1em}
+.pill.red{color:#E08A72;border-color:rgba(192,86,63,.5)}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:0 20px}
+/* ===== 顶栏 ===== */
+.topbar{
+  position:sticky;top:0;z-index:20;padding:14px 20px 10px;
+  background:linear-gradient(180deg,rgba(18,29,51,.96) 60%,rgba(18,29,51,0));
+  display:flex;align-items:center;gap:10px;backdrop-filter:blur(6px);
+}
+.topbar .brand{display:flex;align-items:center;gap:10px}
+.topbar .mark{width:34px;height:34px;border:1px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#26395F,#16233D)}
+.topbar .brand b{font-family:var(--serif);font-size:16px;letter-spacing:.18em;color:var(--paper)}
+.topbar .brand i{font-style:normal;display:block;font-size:9px;color:var(--gold);letter-spacing:.34em;margin-top:1px}
+.topbar .crumb{font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.14em}
+/* ===== 底部Tab ===== */
+.tabbar{
+  position:relative;z-index:30;height:64px;flex:none;display:flex;
+  background:rgba(14,23,48,.96);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tabbar button{
+  flex:1;border:none;background:none;color:var(--text3);font-family:var(--sans);
+  font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  position:relative;cursor:pointer;transition:color .2s;
+}
+.tabbar button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button .dot{position:absolute;top:0;width:22px;height:2px;background:var(--gold);border-radius:0 0 2px 2px;opacity:0;transform:scaleX(.4);transition:.25s}
+.tabbar button.on{color:var(--gold-soft)}
+.tabbar button.on .dot{opacity:1;transform:scaleX(1)}
+/* ===== 首页 ===== */
+.hero{position:relative;min-height:440px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 20px 26px;overflow:hidden}
+.hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;filter:brightness(.62) saturate(1.05)}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,29,51,.15) 0%,rgba(18,29,51,.35) 40%,rgba(13,22,44,.94) 88%,var(--bg) 100%)}
+.hero .frame{position:absolute;inset:16px;border:1px solid rgba(201,169,106,.4);border-radius:14px;pointer-events:none}
+.hero .frame::before,.hero .frame::after{content:"";position:absolute;width:26px;height:26px;border:2px solid var(--gold-soft)}
+.hero .frame::before{left:-1px;top:-1px;border-right:none;border-bottom:none;border-radius:14px 0 0 0}
+.hero .frame::after{right:-1px;bottom:-1px;border-left:none;border-top:none;border-radius:0 0 14px 0}
+.hero .logoline{font-size:9px;letter-spacing:.38em;color:var(--gold-soft);opacity:0;animation:rise .8s .2s ease both;margin-bottom:10px;display:flex;align-items:center;gap:12px;white-space:nowrap}
+.hero .logoline::before,.hero .logoline::after{content:"";width:34px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.hero .logoline::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:44px;letter-spacing:.16em;color:var(--paper);text-shadow:0 2px 24px rgba(0,0,0,.5);line-height:1.2}
+.hero h1 .char{display:inline-block;opacity:0;transform:translateY(24px);animation:rise .7s cubic-bezier(.2,.8,.3,1) forwards}
+.hero .sub{font-family:var(--serif);font-size:12px;letter-spacing:.42em;color:var(--gold-soft);margin-top:12px;opacity:0;animation:rise .8s .9s ease both}
+.hero .tagline{font-size:13px;line-height:1.9;color:var(--text2);margin-top:16px;max-width:86%;opacity:0;animation:rise .8s 1.1s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+/* 首页数据条 */
+.statband{display:flex;margin:0 20px;background:linear-gradient(160deg,var(--card),#192742);border:1px solid var(--line-soft);border-radius:14px;overflow:hidden}
+.statband .st{flex:1;text-align:center;padding:14px 4px;position:relative}
+.statband .st+.st::before{content:"";position:absolute;left:0;top:22%;height:56%;width:1px;background:var(--line-soft)}
+.statband .st b{font-family:var(--serif);font-size:22px;color:var(--gold-soft);display:block;letter-spacing:.04em}
+.statband .st span{font-size:10px;color:var(--text2);letter-spacing:.16em;margin-top:3px;display:block}
+/* 功能入口宫格 */
+.grid6{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px}
+.grid6 .card{padding:16px 14px;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+.grid6 .card .ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(201,169,106,.12);border:1px solid var(--line)}
+.grid6 .card .ico svg{width:21px;height:21px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.grid6 .card h3{font-family:var(--serif);font-size:15.5px;color:var(--paper);letter-spacing:.1em;font-weight:700}
+.grid6 .card p{font-size:11px;color:var(--text2);line-height:1.6;margin-top:4px}
+.grid6 .card .arrow{position:absolute;right:12px;top:12px;width:16px;height:16px;opacity:.5}
+.grid6 .card .arrow svg{stroke:var(--gold)}
+.grid6 .card.red .ico{background:rgba(192,86,63,.14);border-color:rgba(192,86,63,.4)}
+.grid6 .card.red .ico svg{stroke:#E08A72}
+/* 匠人故事横滑 */
+.scrollx{display:flex;gap:12px;overflow-x:auto;padding:4px 20px 10px;scrollbar-width:none;scroll-snap-type:x mandatory}
+.scrollx::-webkit-scrollbar{display:none}
+.storycard{flex:none;width:232px;border-radius:14px;overflow:hidden;border:1px solid var(--line-soft);background:var(--card);scroll-snap-align:start;cursor:pointer}
+.storycard .ph{height:118px;overflow:hidden;position:relative}
+.storycard .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.storycard:active .ph img{transform:scale(1.06)}
+.storycard .ph .tag{position:absolute;left:8px;top:8px;font-size:9px;letter-spacing:.12em;color:var(--gold-soft);background:rgba(14,23,48,.72);border:1px solid var(--line);padding:2px 8px;border-radius:99px}
+.storycard .bd{padding:12px 14px 14px}
+.storycard .bd h4{font-family:var(--serif);font-size:14px;color:var(--paper);letter-spacing:.06em}
+.storycard .bd p{font-size:11px;color:var(--text2);line-height:1.7;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* ===== Toast ===== */
+#toast{
+  position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);
+  background:rgba(14,23,48,.94);border:1px solid var(--line);color:var(--paper);
+  font-size:13px;letter-spacing:.06em;padding:10px 18px;border-radius:99px;
+  opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:80%;text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ===== 工艺卡片展开 ===== */
+.craft{cursor:pointer}
+.craft .chev{transition:transform .35s cubic-bezier(.2,.8,.3,1)}
+.craft.open .chev{transform:rotate(180deg)}
+.craft-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.8,.3,1);opacity:0;transition-property:max-height,opacity,margin}
+.craft.open .craft-body{max-height:320px;opacity:1;margin-top:14px}
+.craft-body>p{font-size:12px;color:var(--text2);line-height:2;border-left:1px solid var(--line);padding-left:12px}
+.steprow{display:flex;gap:0;margin-top:14px;align-items:stretch}
+.step{flex:1;text-align:center;position:relative}
+.step::before{content:"";position:absolute;top:14px;left:50%;width:100%;height:1px;background:var(--line-soft)}
+.step:last-child::before{width:50%}
+.step:first-child::before{left:50%}
+.step i{display:flex;width:28px;height:28px;margin:0 auto;border-radius:50%;border:1px solid var(--line);background:var(--bg2);color:var(--gold);font-style:normal;font-size:10px;font-family:var(--serif);align-items:center;justify-content:center;position:relative;z-index:1}
+.step span{display:block;font-size:10px;color:var(--text2);margin-top:6px;letter-spacing:.06em}
+/* ===== 穿越时间步骤 ===== */
+.timeline-steps{display:flex;justify-content:space-between;position:relative;padding:6px 0 0}
+.timeline-steps::before{content:"";position:absolute;top:15px;left:10%;right:10%;height:1px;background:var(--line-soft)}
+.timeline-steps::after{content:"";position:absolute;top:15px;left:10%;height:1px;width:0;background:var(--gold);transition:width .5s cubic-bezier(.2,.8,.3,1)}
+.timeline-steps[data-p="1"]::after{width:10%}
+.timeline-steps[data-p="2"]::after{width:30%}
+.timeline-steps[data-p="3"]::after{width:50%}
+.timeline-steps[data-p="4"]::after{width:70%}
+.timeline-steps[data-p="5"]::after{width:80%}
+.tl-item{width:20%;text-align:center;position:relative;z-index:1}
+.tl-item i{display:flex;width:30px;height:30px;margin:0 auto;border-radius:50%;border:1px solid var(--line-soft);background:var(--bg2);color:var(--text3);font-style:normal;font-family:var(--serif);font-size:11px;align-items:center;justify-content:center;transition:.3s}
+.tl-item.on i{background:linear-gradient(145deg,var(--gold),var(--gold-deep));color:#16233D;border-color:var(--gold-soft);box-shadow:0 0 0 4px rgba(201,169,106,.15);transform:scale(1.06)}
+.tl-item b{display:block;font-family:var(--serif);font-size:12px;color:var(--text3);margin-top:7px;letter-spacing:.06em;transition:.3s;font-weight:600}
+.tl-item.on b{color:var(--gold-soft)}
+.tl-item span{display:block;font-size:9px;color:var(--text3);margin-top:2px}
+/* ===== 按钮 ===== */
+.btn-gold,.btn-ghost{
+  border-radius:11px;font-family:var(--sans);font-size:13px;letter-spacing:.12em;
+  padding:11px 14px;cursor:pointer;transition:.2s;border:1px solid transparent;
+}
+.btn-gold{background:linear-gradient(145deg,#D8BC7E,#B08E4E);color:#16233D;font-weight:700;box-shadow:0 6px 18px rgba(201,169,106,.22)}
+.btn-gold:active{transform:scale(.97)}
+.btn-ghost{background:rgba(201,169,106,.06);border-color:var(--line);color:var(--gold-soft)}
+.btn-ghost:active{transform:scale(.97)}
+/* ===== 虚拟织机 ===== */
+.loom{position:relative;height:150px;border:1px solid var(--line-soft);border-radius:12px;background:radial-gradient(320px 120px at 50% 0%,#24365C,var(--bg2));overflow:hidden}
+.loom-line{position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0}
+.loom-line.run{opacity:1;animation:shuttle 1.1s linear infinite}
+@keyframes shuttle{0%{transform:translateX(-55%) scaleX(.6);opacity:0}15%{opacity:1}50%{transform:translateX(0) scaleX(1)}85%{opacity:1}100%{transform:translateX(55%) scaleX(.6);opacity:0}}
+.loom-warp{position:absolute;inset:0;display:flex;justify-content:center;gap:16px;padding-top:8px}
+.loom-warp i{width:1px;height:100%;background:linear-gradient(180deg,rgba(230,206,151,.7),rgba(230,206,151,.15));opacity:.25;transition:.4s}
+.loom-warp.done i{opacity:.85}
+.loom-warp.done i:nth-child(odd){opacity:.4}
+.loom-shuttle{position:absolute;left:calc(50% - 14px);top:calc(50% - 5px);width:28px;height:10px;border-radius:3px;background:linear-gradient(90deg,#8C6F3A,#D8BC7E,#8C6F3A);opacity:0;transition:.3s}
+.loom-shuttle.run{opacity:1}
+.loom-cloth{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:34%;height:0;background:linear-gradient(180deg,rgba(201,169,106,.5),rgba(201,169,106,.12));border-top:1px solid var(--gold);transition:height .8s ease}
+.loom-cloth.grow{height:38%}
+/* ===== 角色扮演 ===== */
+.role3{display:flex;gap:10px}
+.role{flex:1;text-align:center;padding:12px 4px 10px;border-radius:12px;border:1px solid var(--line-soft);background:rgba(201,169,106,.04);cursor:pointer;transition:.25s}
+.role:active,.role.picked{border-color:var(--gold);background:rgba(201,169,106,.1);transform:translateY(-2px)}
+.role .r-ico{width:38px;height:38px;margin:0 auto 8px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(201,169,106,.12);border:1px solid var(--line)}
+.role .r-ico svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.role b{display:block;font-family:var(--serif);font-size:12.5px;color:var(--paper);letter-spacing:.04em}
+.role span{display:block;font-size:9px;color:var(--text3);margin-top:4px;line-height:1.5}
+/* ===== 观展器 ===== */
+.viewer{background:linear-gradient(170deg,var(--card),#182640);border:1px solid var(--line-soft);border-radius:18px;padding:12px;position:relative}
+.viewer-stage{position:relative;height:250px;border-radius:12px;overflow:hidden;border:1px solid var(--line-soft);background:#0C1428}
+.viewer-stage img{width:100%;height:100%;object-fit:cover;filter:brightness(1) contrast(1.04);transition:filter .35s ease}
+.viewer-tag{position:absolute;left:10px;bottom:10px;font-size:10px;letter-spacing:.14em;color:var(--paper);background:rgba(14,23,48,.72);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+.viewer-thumbs{display:flex;gap:8px;margin-top:10px}
+.vt{flex:1;height:52px;border-radius:8px;overflow:hidden;border:1px solid var(--line-soft);cursor:pointer;opacity:.55;transition:.25s}
+.vt img{width:100%;height:100%;object-fit:cover}
+.vt.on{opacity:1;border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,169,106,.2)}
+.light-panel{margin-top:12px;padding:12px;border:1px solid var(--line-soft);border-radius:12px;background:rgba(14,23,48,.4)}
+.light-panel input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,#1A2947,var(--gold));border-radius:99px;outline:none;margin:6px 0}
+.light-panel input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F0DFB6,var(--gold) 60%,#8C6F3A);border:1px solid #F0DFB6;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.light-notes{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);letter-spacing:.14em}
+.viewer-cta{margin-top:12px}
+.viewer-cta .btn-gold{width:100%}
+/* ===== 档案Tab ===== */
+.tabchip{display:flex;gap:8px;padding:0 20px;margin-bottom:14px}
+.tabchip button{flex:1;border:1px solid var(--line-soft);background:rgba(201,169,106,.05);color:var(--text2);border-radius:99px;padding:8px 0;font-size:12px;letter-spacing:.1em;cursor:pointer;transition:.25s;font-family:var(--sans)}
+.tabchip button.on{background:linear-gradient(145deg,#D8BC7E,#B08E4E);color:#16233D;border-color:transparent;font-weight:700}
+.pattern-card{background:linear-gradient(160deg,var(--card),#192742);border:1px solid var(--line-soft);border-radius:16px;padding:14px}
+.swatches{display:flex;gap:8px;margin-top:10px}
+.swatches i{flex:1;height:26px;border-radius:7px;border:1px solid rgba(255,255,255,.15);position:relative}
+.swatches i::after{content:"";position:absolute;inset:3px;border-radius:4px;border:1px solid rgba(255,255,255,.18)}
+/* ===== DIY 画布 ===== */
+.subhead{font-family:var(--serif);font-size:14px;color:var(--paper);letter-spacing:.12em;padding:20px 20px 10px}
+.canvas-frame{background:linear-gradient(170deg,#1A2947,#131F38);border:1px solid var(--line-soft);border-radius:18px;padding:12px}
+.canvas-stage{position:relative;height:290px;border-radius:12px;overflow:hidden;border:1px solid var(--line-soft);background:#0E1830}
+.canvas-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .35s}
+.diy-colorlayer{position:absolute;inset:0;pointer-events:none;transition:background .4s;mix-blend-mode:multiply}
+.canvas-grid{position:absolute;inset:0;pointer-events:none;opacity:.5;background:repeating-linear-gradient(0deg,rgba(201,169,106,.05) 0 1px,transparent 1px 14px),repeating-linear-gradient(90deg,rgba(201,169,106,.05) 0 1px,transparent 1px 14px)}
+.canvas-mark{position:absolute;left:10px;bottom:8px;font-family:var(--serif);font-size:9px;letter-spacing:.3em;color:var(--gold-soft);opacity:.85;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.canvas-stage.drop{box-shadow:inset 0 0 0 2px var(--gold-soft),0 0 26px rgba(201,169,106,.28);transition:box-shadow .3s}
+.canvas-stage img{cursor:grab;touch-action:none}
+.matrow{display:flex;gap:10px;overflow-x:auto;padding:4px 20px 6px;scrollbar-width:none}
+.matrow::-webkit-scrollbar{display:none}
+.mat{flex:none;width:76px;text-align:center;cursor:pointer;touch-action:none}
+.mat img{width:76px;height:76px;object-fit:cover;border-radius:12px;border:1px solid var(--line-soft);transition:.25s;display:block}
+.mat span{display:block;font-size:10px;color:var(--text2);margin-top:6px;letter-spacing:.08em}
+.mat.on img{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,169,106,.22);transform:translateY(-2px)}
+.mat.on span{color:var(--gold-soft)}
+.palrow{display:flex;gap:10px;padding:4px 20px 6px;overflow-x:auto;scrollbar-width:none}
+.palrow::-webkit-scrollbar{display:none}
+.pal{flex:none;width:88px;text-align:center;cursor:pointer}
+.pal i{display:inline-block;width:22px;height:22px;border-radius:50%;border:1px solid rgba(255,255,255,.25);margin:0 -2px;transition:.2s}
+.pal span{display:block;font-size:10px;color:var(--text2);margin-top:7px;letter-spacing:.08em}
+.pal.on i{transform:translateY(-3px);box-shadow:0 0 0 2px rgba(201,169,106,.25)}
+.pal.on span{color:var(--gold-soft)}
+/* ===== 故事时间轴 ===== */
+.tline{position:relative;margin:0 20px;padding-left:24px;display:flex;flex-direction:column;gap:0}
+.tline::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,var(--gold),rgba(201,169,106,.12))}
+.tline-item{position:relative;padding:0 0 18px 18px}
+.tline-item:last-child{padding-bottom:4px}
+.tline-item i{position:absolute;left:-24px;top:5px;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg);background:var(--text3);box-shadow:0 0 0 1px var(--line-soft)}
+.tline-item i.on{background:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 10px rgba(201,169,106,.5)}
+.tline-item b{font-family:var(--serif);font-size:13.5px;color:var(--paper);letter-spacing:.08em;font-weight:700}
+.tline-item span{display:block;font-size:11px;color:var(--text2);line-height:1.7;margin-top:4px}
+/* ===== Splash 启动动画 ===== */
+#splash{position:absolute;inset:0;z-index:120;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(700px 420px at 50% 30%,#1B2C50 0%,#0D162C 78%);transition:opacity .55s ease,visibility .55s}
+#splash.done{opacity:0;visibility:hidden;pointer-events:none}
+.splash-weave{position:absolute;inset:0;opacity:.5;background:repeating-linear-gradient(0deg,rgba(201,169,106,.07) 0 1px,transparent 1px 26px),repeating-linear-gradient(90deg,rgba(201,169,106,.07) 0 1px,transparent 1px 26px)}
+.splash-silk{position:absolute;inset:0;overflow:hidden}
+.splash-silk::before,.splash-silk::after{content:"";position:absolute;left:-30%;right:-30%;height:1px;background:linear-gradient(90deg,transparent,rgba(230,206,151,.95),transparent)}
+.splash-silk::before{top:36%;animation:silkX 1.7s ease-in-out infinite}
+.splash-silk::after{top:64%;animation:silkX 1.7s .85s ease-in-out infinite}
+@keyframes silkX{0%,100%{transform:translateX(-24%)}50%{transform:translateX(24%)}}
+.splash-name{font-family:var(--serif);font-size:46px;font-weight:900;letter-spacing:.22em;color:var(--gold-soft);text-shadow:0 0 36px rgba(201,169,106,.4),0 2px 10px rgba(0,0,0,.5);display:flex;padding-left:.22em;position:relative;z-index:2}
+.splash-name span{opacity:0;transform:translateY(20px) scale(.95);animation:splashChar .62s cubic-bezier(.2,.8,.3,1) forwards}
+.splash-name span:nth-child(1){animation-delay:.2s}
+.splash-name span:nth-child(2){animation-delay:.38s}
+.splash-name span:nth-child(3){animation-delay:.56s}
+.splash-name span:nth-child(4){animation-delay:.74s}
+@keyframes splashChar{to{opacity:1;transform:none}}
+.splash-en{font-family:var(--serif);font-size:10px;letter-spacing:.6em;color:var(--gold);margin-top:18px;opacity:0;animation:rise .7s 1.05s ease both;position:relative;z-index:2}
+.splash-line{width:170px;height:1px;margin-top:28px;background:rgba(201,169,106,.18);overflow:hidden;position:relative;z-index:2}
+.splash-line i{display:block;height:100%;width:38%;background:var(--gold-soft);animation:splashLine 1.3s .6s cubic-bezier(.4,0,.2,1) infinite}
+@keyframes splashLine{0%{transform:translateX(-110%)}100%{transform:translateX(390%)}}
+/* ===== Hero 经纬动态背景 ===== */
+.weave{position:absolute;inset:0;pointer-events:none;opacity:.55}
+.weave .w-h{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(230,206,151,.55),transparent);opacity:0;animation:wH 7s linear infinite}
+.weave .w-v{position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,rgba(230,206,151,.45),transparent);opacity:0;animation:wV 9s linear infinite}
+.weave .w-dot{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold-soft);box-shadow:0 0 9px var(--gold);opacity:0;animation:wDot 3.8s ease-in-out infinite}
+@keyframes wH{0%{opacity:0;transform:scaleX(.15)}18%{opacity:.85}82%{opacity:.35}100%{opacity:0;transform:scaleX(1)}}
+@keyframes wV{0%{opacity:0;transform:scaleY(.15)}18%{opacity:.75}82%{opacity:.35}100%{opacity:0;transform:scaleY(1)}}
+@keyframes wDot{0%,100%{opacity:0;transform:scale(.55)}50%{opacity:1;transform:scale(1.35)}}
+.weave .w-h:nth-child(1){animation-delay:0s}.weave .w-h:nth-child(2){animation-delay:1.4s}.weave .w-h:nth-child(3){animation-delay:2.8s}.weave .w-h:nth-child(4){animation-delay:4.2s}.weave .w-h:nth-child(5){animation-delay:5.6s}
+.weave .w-v:nth-child(6){animation-delay:.9s}.weave .w-v:nth-child(7){animation-delay:2.3s}.weave .w-v:nth-child(8){animation-delay:3.7s}.weave .w-v:nth-child(9){animation-delay:5.1s}.weave .w-v:nth-child(10){animation-delay:6.5s}
+.weave .w-dot:nth-child(11){animation-delay:.5s}.weave .w-dot:nth-child(12){animation-delay:1.9s}.weave .w-dot:nth-child(13){animation-delay:2.7s}.weave .w-dot:nth-child(14){animation-delay:3.9s}.weave .w-dot:nth-child(15){animation-delay:5.3s}
+/* ===== 观展聚光 ===== */
+.viewer-stage{overflow:hidden}
+.spotlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(130px 130px at 50% 42%,transparent 0%,transparent 40%,rgba(8,13,28,.6) 66%,rgba(8,13,28,.88) 100%)}
+.viewer-hint{position:absolute;right:10px;top:10px;font-size:9px;letter-spacing:.14em;color:rgba(243,236,220,.85);background:rgba(14,23,48,.65);border:1px solid rgba(201,169,106,.5);padding:3px 9px;border-radius:99px;opacity:0;transition:.3s}
+.viewer-hint.show{opacity:1}
+.viewer-stage.zoomed img{transform:scale(1.7);transition:transform .45s cubic-bezier(.2,.8,.3,1)}
+.viewer-stage.zoomed .spotlight{background:radial-gradient(120px 120px at 50% 42%,transparent 0%,transparent 33%,rgba(8,13,28,.52) 58%,rgba(8,13,28,.94) 100%)}
+/* ===== 按钮流光 ===== */
+.btn-gold{position:relative;overflow:hidden}
+.btn-gold::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);pointer-events:none}
+.btn-gold:active::after{animation:sheen .55s ease}
+@keyframes sheen{to{left:135%}}
+/* ===== 滚动显现 ===== */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.3,1)}
+.reveal.in{opacity:1;transform:none}
+/* ===== 视图转场金线 ===== */
+#transition{position:absolute;inset:0;z-index:110;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden}
+#transition.show{opacity:1;visibility:visible;animation:transFade .42s ease}
+#transition .t-line{width:66px;height:1px;background:var(--gold-soft);box-shadow:0 0 14px var(--gold);transform:scaleX(0)}
+#transition.show .t-line{animation:tGrow .34s .06s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes tGrow{to{transform:scaleX(1)}}
+@keyframes transFade{0%{opacity:1}100%{opacity:0}}
+/* ===== 织机经线逐根点亮 ===== */
+.loom-warp.done i{transition:opacity .35s ease}
+.loom-warp.done i:nth-child(3n){transition-delay:.08s}
+.loom-warp.done i:nth-child(3n+1){transition-delay:.2s}
+.loom-warp.done i:nth-child(3n+2){transition-delay:.32s}
+/* ===== 动效降级 ===== */
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ===== 启动动画：丝线织出品牌名 ===== -->
+  <div id="splash" aria-hidden="true">
+    <div class="splash-weave"></div>
+    <div class="splash-silk"></div>
+    <div class="splash-name"><span>锦</span><span>织</span><span>时</span><span>序</span></div>
+    <div class="splash-en">BROCADE CHRONICLE</div>
+    <div class="splash-line"><i></i></div>
+  </div>
+
+  <!-- ===== 主内容 ===== -->
+  <main id="main">
+
+    <!-- ===== 视图：首页 ===== -->
+    <section class="view active" id="view-home" data-view="home">
+      <div class="hero">
+        <img class="bg" src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/VLhCbfXjCoPUC0xw7FccX5U0nag" alt="宋锦翟鸟纹织锦">
+        <div class="veil"></div>
+        <div class="weave" aria-hidden="true">
+          <i class="w-h" style="top:18%"></i><i class="w-h" style="top:34%"></i><i class="w-h" style="top:52%"></i><i class="w-h" style="top:68%"></i><i class="w-h" style="top:82%"></i>
+          <i class="w-v" style="left:12%"></i><i class="w-v" style="left:30%"></i><i class="w-v" style="left:48%"></i><i class="w-v" style="left:66%"></i><i class="w-v" style="left:84%"></i>
+          <em class="w-dot" style="left:12%;top:34%"></em><em class="w-dot" style="left:30%;top:52%"></em><em class="w-dot" style="left:48%;top:18%"></em><em class="w-dot" style="left:66%;top:68%"></em><em class="w-dot" style="left:84%;top:34%"></em>
+        </div>
+        <div class="frame"></div>
+        <div class="logoline">BROCADE CHRONICLE · 织锦档案馆</div>
+        <h1><span class="char">锦</span><span class="char">织</span><span class="char">时</span><span class="char">序</span></h1>
+        <div class="sub">锦绣文脉 · 经纬序章</div>
+        <p class="tagline">以数字之纬，织千年之锦。收录江南四大织绣工艺，典藏纹样与配色档案，于指尖重现织机之上的一丝一缕。</p>
+      </div>
+
+      <div class="statband">
+        <div class="st"><b data-count="4">0</b><span>非遗织绣工艺</span></div>
+        <div class="st"><b data-count="1280">0</b><span>典藏纹样档案</span></div>
+        <div class="st"><b data-count="300">0</b><span>段匠人故事</span></div>
+      </div>
+
+      <div class="section-title"><span class="zh">馆藏导览</span><span class="en">Galleries</span></div>
+      <div class="grid6">
+        <div class="card" data-nav="#/study" data-focus="craft">
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16M7 6v12M14 12v6"/></svg></div>
+          <div><h3>织绣知识库</h3><p>苏绣针法 · 宋锦织造 · 缂丝 · 云锦挑花</p></div>
+        </div>
+        <div class="card red" data-nav="#/exhibit" data-focus="pattern">
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 4.6 5 .7-3.6 3.5.9 5L12 14.7 7.5 16.8l.9-5-3.6-3.5 5-.7z"/></svg></div>
+          <div><h3>纹样与配色档案</h3><p>吉祥纹样 · 传统配色 · 馆藏3D扫描</p></div>
+        </div>
+        <div class="card" data-nav="#/exhibit" data-focus="view">
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="2.6"/></svg></div>
+          <div><h3>高清虚拟观展</h3><p>沉浸观展 · 光影调节 · 工序拆解</p></div>
+        </div>
+        <div class="card red" data-nav="#/study" data-focus="interact">
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 8h16M8 8v12M4 14h6M4 20h6M14 4l4 8M16 12l-2 8"/></svg></div>
+          <div><h3>工艺交互拆解</h3><p>虚拟织机 · 角色扮演 · 穿越时间</p></div>
+        </div>
+        <div class="card" data-nav="#/create">
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20c0-8 4-12 12-12M14 4l6 6-4 2-2 4-6-6 4-2z"/></svg></div>
+          <div><h3>DIY 纹样创作</h3><p>纹样重组 · 传统配色 · 一键导出</p></div>
+        </div>
+        <div class="card red" data-nav="#/story">
+          <span class="arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 5l3 14h10l3-14M10 9h4M10 13h4"/></svg></div>
+          <div><h3>纹样故事库</h3><p>民俗故事 · 时代溯源 · 艺术拓展</p></div>
+        </div>
+      </div>
+
+      <div class="section-title"><span class="zh">匠心手记</span><span class="en">Craftsman</span></div>
+      <div class="scrollx">
+        <div class="storycard" data-nav="#/story">
+          <div class="ph"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SFunbwMu5oKagCx5a2dcFp2Knfh" alt="绣娘"><span class="tag">苏绣 · 平针</span></div>
+          <div class="bd"><h4>一针一意，三十年绣娘手记</h4><p>选纹样、配丝色，老绣娘说每一根线里都有故事的底色。</p></div>
+        </div>
+        <div class="storycard" data-nav="#/story">
+          <div class="ph"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/AzYDbcvqsovkizxGCI0cKgFhnT7" alt="云锦织造"><span class="tag">云锦 · 挑花</span></div>
+          <div class="bd"><h4>一台织机，两个人的默契</h4><p>拽花与织手上下呼应，一天五厘米，一寸云锦三日工。</p></div>
+        </div>
+        <div class="storycard" data-nav="#/story">
+          <div class="ph"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" alt="缂丝凤凰牡丹"><span class="tag">缂丝 · 通经断纬</span></div>
+          <div class="bd"><h4>一寸缂丝一寸金</h4><p>通经断纬，如雕镂之象，一件凤穿牡丹耗时数载。</p></div>
+        </div>
+      </div>
+
+      <div style="padding:8px 20px 6px">
+        <div class="card" style="cursor:pointer" data-nav="#/exhibit" data-focus="view">
+          <div style="display:flex;align-items:center;gap:14px">
+            <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SsQubarGBolsYtxAA6ycfOtan3g" alt="云锦九龙图" style="width:84px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
+            <div style="flex:1">
+              <h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.08em">镇馆典藏 · 云锦九龙图</h3>
+              <p style="font-size:11px;color:var(--text2);margin-top:5px;line-height:1.7">江宁织造博物馆藏 · 3D数字扫描已上线，支持细节放大检视</p>
+            </div>
+            <span class="pill">进馆观展</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:22px 20px 4px">
+        <p style="font-family:var(--serif);font-size:11px;color:var(--text3);letter-spacing:.3em">BROCADE CHRONICLE · 锦织时序</p>
+        <p style="font-size:10px;color:var(--text3);margin-top:8px;letter-spacing:.14em">江南织锦纹样数字档案馆 · 数字人文项目原型</p>
+      </div>
+    </section>
+
+    <!-- ===== 视图：研学（织绣知识库 + 工艺交互） ===== -->
+    <section class="view" id="view-study" data-view="study">
+      <div class="topbar">
+        <div class="brand"><span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.6"><path d="M4 6h16M4 12h10M4 18h16M7 6v12M14 12v6"/></svg></span><div><b>锦织时序</b><i>BROCADE</i></div></div>
+        <div class="crumb" id="crumb-study">研学 · 工艺</div>
+      </div>
+
+      <div class="section-title" id="focus-craft"><span class="zh">织绣知识库</span><span class="en">Craft Atlas</span></div>
+
+      <!-- 工艺卡片：点击展开 -->
+      <div style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+        <div class="craft card" data-craft="suxiu">
+          <div style="display:flex;gap:12px;align-items:center">
+            <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/FAZybBxI3ouKI5x50fFcdVcQnbf" alt="苏绣" style="width:72px;height:56px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px"><h3 style="font-family:var(--serif);font-size:16px;color:var(--paper);letter-spacing:.06em">苏绣针法解析</h3><span class="pill">国家级非遗</span></div>
+              <p style="font-size:11px;color:var(--text2);margin-top:5px">平针 · 盘金 · 套针 · 施针</p>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2;transition:.3s"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="craft-body">
+            <p>针法以丝线为笔，依纹样走势分层施绣。平针匀密打底，盘金以金线沿轮廓盘绕勾勒，套针层层嵌套过渡色阶，施针依物象纹理走势排线。</p>
+            <div class="steprow">
+              <div class="step"><i>01</i><span>勾稿</span></div><div class="step"><i>02</i><span>劈丝</span></div><div class="step"><i>03</i><span>施针</span></div><div class="step"><i>04</i><span>盘金</span></div><div class="step"><i>05</i><span>收边</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="craft card" data-craft="songjin">
+          <div style="display:flex;gap:12px;align-items:center">
+            <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/HBaEbcOBgogw9sxVWl5clEDznFe" alt="宋锦" style="width:72px;height:56px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px"><h3 style="font-family:var(--serif);font-size:16px;color:var(--paper);letter-spacing:.06em">宋锦织造技艺</h3><span class="pill">三大名锦</span></div>
+              <p style="font-size:11px;color:var(--text2);margin-top:5px">经纬组织 · 配色体系 · 图案谱系</p>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2;transition:.3s"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="craft-body">
+            <p>宋锦以斜纹纬锦为骨干，纹样典雅、配色沉静，具文人画意。从蚕桑缫丝、染色络线到上机织造，经纬间织出「锦绣之冠」的温润质地。</p>
+            <div class="steprow">
+              <div class="step"><i>01</i><span>蚕桑</span></div><div class="step"><i>02</i><span>缫丝</span></div><div class="step"><i>03</i><span>染色</span></div><div class="step"><i>04</i><span>络线</span></div><div class="step"><i>05</i><span>织造</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="craft card" data-craft="kesi">
+          <div style="display:flex;gap:12px;align-items:center">
+            <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/US92boPivoVcYoxtledceQ2nn8d" alt="缂丝" style="width:72px;height:56px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px"><h3 style="font-family:var(--serif);font-size:16px;color:var(--paper);letter-spacing:.06em">缂丝 · 通经断纬</h3><span class="pill">织中之圣</span></div>
+              <p style="font-size:11px;color:var(--text2);margin-top:5px">一色一纬 · 一形一梭 · 承空雕镂</p>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2;transition:.3s"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="craft-body">
+            <p>经线通贯全幅，各色纬丝以独立小梭分块织入，轮廓交接处如刀刻镂空，故称「刻丝」。多色小梭交替，一天仅织寸许，一寸缂丝一寸金。</p>
+            <div class="steprow">
+              <div class="step"><i>01</i><span>上经</span></div><div class="step"><i>02</i><span>摹稿</span></div><div class="step"><i>03</i><span>勾边</span></div><div class="step"><i>04</i><span>戗色</span></div><div class="step"><i>05</i><span>修毛</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="craft card" data-craft="yunjin">
+          <div style="display:flex;gap:12px;align-items:center">
+            <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" alt="云锦" style="width:72px;height:56px;object-fit:cover;border-radius:9px;border:1px solid var(--line)">
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px"><h3 style="font-family:var(--serif);font-size:16px;color:var(--paper);letter-spacing:.06em">云锦 · 挑花结本</h3><span class="pill">皇家御用</span></div>
+              <p style="font-size:11px;color:var(--text2);margin-top:5px">挑花结本 · 通经断纬 · 挖花盘织</p>
+            </div>
+            <svg class="chev" viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2;transition:.3s"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="craft-body">
+            <p>挑花结本以丝为经、棉为纬，将纹样逐格编成「程序」，上机后拽花工与织手一上一下，依花本提经织纬，两人默契一天仅织五厘米。</p>
+            <div class="steprow">
+              <div class="step"><i>01</i><span>意匠图</span></div><div class="step"><i>02</i><span>挑花</span></div><div class="step"><i>03</i><span>结本</span></div><div class="step"><i>04</i><span>造机</span></div><div class="step"><i>05</i><span>织造</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title" id="focus-interact"><span class="zh">工艺交互拆解</span><span class="en">Interactive</span></div>
+
+      <!-- 穿越时间 -->
+      <div class="card" style="margin:0 20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span class="pill">穿越时间</span>
+          <h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.08em">一件织锦的诞生</h3>
+        </div>
+        <div class="timeline-steps" id="tl-steps">
+          <div class="tl-item on"><i>1</i><b>起稿</b><span>纹样设计</span></div>
+          <div class="tl-item"><i>2</i><b>挑花</b><span>结本程序</span></div>
+          <div class="tl-item"><i>3</i><b>上机</b><span>经线排布</span></div>
+          <div class="tl-item"><i>4</i><b>织造</b><span>纬线交织</span></div>
+          <div class="tl-item"><i>5</i><b>成品</b><span>落机修剪</span></div>
+        </div>
+        <p id="tl-desc" style="font-size:12px;color:var(--text2);line-height:1.8;margin-top:14px;min-height:44px">设计师依纹样章法绘制意匠图，把图案拆解为经纬坐标，一稿定千年。</p>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn-ghost" id="tl-prev" style="flex:1">上一步</button>
+          <button class="btn-gold" id="tl-next" style="flex:1">下一步</button>
+        </div>
+      </div>
+
+      <!-- 虚拟织机 -->
+      <div class="card" style="margin:12px 20px 0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span class="pill red">虚拟织机</span>
+          <h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.08em">上手体验穿经打纬</h3>
+        </div>
+        <div class="loom">
+          <div class="loom-line" id="loom-line"></div>
+          <div class="loom-warp" id="loom-warp"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="loom-shuttle" id="loom-shuttle"></div>
+          <div class="loom-cloth" id="loom-cloth"></div>
+        </div>
+        <p id="loom-status" style="font-size:12px;color:var(--text2);line-height:1.8;margin-top:12px">点击「穿经」开始：将丝线逐一穿入综眼，排布经面。</p>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn-ghost" id="loom-reset" style="flex:0 0 74px">重置</button>
+          <button class="btn-gold" id="loom-do" style="flex:1">穿经</button>
+        </div>
+      </div>
+
+      <!-- 角色扮演 -->
+      <div class="card" style="margin:12px 20px 0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span class="pill">角色扮演</span>
+          <h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.08em">协作完成一件织物</h3>
+        </div>
+        <div class="role3">
+          <div class="role" data-role="织工"><div class="r-ico"><svg viewBox="0 0 24 24"><path d="M4 8h16M8 8v12M4 14h6M4 20h6"/></svg></div><b>织工</b><span>操作织机经纬</span></div>
+          <div class="role" data-role="绣娘"><div class="r-ico"><svg viewBox="0 0 24 24"><path d="M4 20c0-8 4-12 12-12M14 4l6 6-4 2-2 4-6-6 4-2z"/></svg></div><b>绣娘</b><span>施针配色盘金</span></div>
+          <div class="role" data-role="纹样设计师"><div class="r-ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 4.6 5 .7-3.6 3.5.9 5L12 14.7 7.5 16.8l.9-5-3.6-3.5 5-.7z"/></svg></div><b>纹样设计师</b><span>立意匠图定稿</span></div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </section>
+
+    <!-- ===== 视图：观展（虚拟观展 + 纹样与配色档案） ===== -->
+    <section class="view" id="view-exhibit" data-view="exhibit">
+      <div class="topbar">
+        <div class="brand"><span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.6"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="2.6"/></svg></span><div><b>锦织时序</b><i>BROCADE</i></div></div>
+        <div class="crumb">观展 · 档案</div>
+      </div>
+
+      <!-- 沉浸式观展 -->
+      <div class="section-title" id="focus-view"><span class="zh">高清虚拟观展</span><span class="en">Virtual Tour</span></div>
+      <div style="padding:0 20px">
+        <div class="viewer" id="viewer">
+          <div class="viewer-stage" id="viewer-stage">
+            <img id="viewer-img" src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SsQubarGBolsYtxAA6ycfOtan3g" alt="展品">
+            <div class="spotlight" id="spotlight"></div>
+            <div class="viewer-tag" id="viewer-tag">云锦九龙图 · 清</div>
+            <div class="viewer-hint">移动指尖 · 聚光细看</div>
+          </div>
+          <div class="viewer-thumbs">
+            <div class="vt on" data-vimg="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SsQubarGBolsYtxAA6ycfOtan3g" data-vtag="云锦九龙图 · 清"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SsQubarGBolsYtxAA6ycfOtan3g" alt="云锦九龙图"></div>
+            <div class="vt" data-vimg="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc" data-vtag="红地缠枝宝仙纹闪缎 · 清"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc" alt="红地缠枝宝仙纹"></div>
+            <div class="vt" data-vimg="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" data-vtag="云锦团龙纹 · 明"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" alt="云锦团龙纹"></div>
+            <div class="vt" data-vimg="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" data-vtag="缂丝凤穿牡丹 · 明"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" alt="缂丝凤穿牡丹"></div>
+          </div>
+          <div class="light-panel">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <span class="pill">光影调节</span><span style="font-size:11px;color:var(--text2)">滑动观察丝线光泽与纹理质感</span>
+            </div>
+            <input type="range" id="light-range" min="40" max="160" value="100">
+            <div class="light-notes"><span>暗室</span><span id="light-val">自然光</span><span>强光</span></div>
+          </div>
+          <div class="viewer-cta"><button class="btn-gold" id="viewer-full">全屏细看 · 细节放大</button></div>
+        </div>
+      </div>
+
+      <!-- 纹样与配色档案 -->
+      <div class="section-title" id="focus-pattern"><span class="zh">纹样与配色档案</span><span class="en">Pattern Archive</span></div>
+      <div class="tabchip" id="pattern-tabs">
+        <button class="on" data-ptab="pattern">吉祥纹样</button>
+        <button data-ptab="color">传统配色</button>
+        <button data-ptab="scan">馆藏3D扫描</button>
+      </div>
+
+      <div class="ptab" id="ptab-pattern">
+        <div class="pattern-card" style="display:flex;gap:12px;margin:0 20px">
+          <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc" alt="缠枝宝仙纹" style="width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
+          <div style="flex:1">
+            <h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">缠枝纹 · 生生不息</h3>
+            <p style="font-size:11px;color:var(--text2);line-height:1.8;margin-top:6px">藤蔓连绵缠绕，取「生生不息、绵延不绝」之意，常见于妆花缎与宋锦，枝随花转、韵律婉转。</p>
+            <div style="display:flex;gap:6px;margin-top:8px"><span class="pill">缠枝莲</span><span class="pill">宝仙花</span><span class="pill">卷草</span></div>
+          </div>
+        </div>
+        <div class="pattern-card" style="display:flex;gap:12px;margin:12px 20px 0">
+          <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" alt="团龙纹" style="width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
+          <div style="flex:1">
+            <h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">团龙纹 · 皇权尊荣</h3>
+            <p style="font-size:11px;color:var(--text2);line-height:1.8;margin-top:6px">龙形盘踞成团，配云纹火焰，为皇家御用纹样。蝙蝠、鹿、鱼等民俗纹样则寓意福禄有余。</p>
+            <div style="display:flex;gap:6px;margin-top:8px"><span class="pill">云龙</span><span class="pill red">蝠纹·福</span><span class="pill red">鹿纹·禄</span><span class="pill red">鱼纹·余</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ptab" id="ptab-color" style="display:none">
+        <div style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+          <div class="card">
+            <h3 style="font-family:var(--serif);font-size:14px;color:var(--paper);letter-spacing:.08em">宋锦配色 · 文人雅致</h3>
+            <p style="font-size:11px;color:var(--text2);margin-top:5px">藏青为地，间以绯红、米金，沉稳内敛</p>
+            <div class="swatches"><i style="background:#1E3A5F"></i><i style="background:#8E3B2A"></i><i style="background:#C9A96A"></i><i style="background:#2F4F3E"></i><i style="background:#E8D9B8"></i></div>
+          </div>
+          <div class="card">
+            <h3 style="font-family:var(--serif);font-size:14px;color:var(--paper);letter-spacing:.08em">苏绣配色 · 清丽柔和</h3>
+            <p style="font-size:11px;color:var(--text2);margin-top:5px">以线色过渡表现光影，浓淡相宜</p>
+            <div class="swatches"><i style="background:#7A5B8A"></i><i style="background:#C97B84"></i><i style="background:#9DBB8A"></i><i style="background:#E6C79A"></i><i style="background:#5B7E9E"></i></div>
+          </div>
+          <div class="card">
+            <h3 style="font-family:var(--serif);font-size:14px;color:var(--paper);letter-spacing:.08em">缂丝配色 · 浓丽贵气</h3>
+            <p style="font-size:11px;color:var(--text2);margin-top:5px">设色浓丽，一色一梭，色阶齐备</p>
+            <div class="swatches"><i style="background:#7E1F18"></i><i style="background:#C9A96A"></i><i style="background:#1F3A34"></i><i style="background:#8A5A3B"></i><i style="background:#3E5C7E"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ptab" id="ptab-scan" style="display:none">
+        <div style="padding:0 20px">
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><span class="pill red">馆藏3D数字扫描</span><h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">文物细节还原</h3></div>
+            <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/Wr9Yb2dEvoYrSmx5AJ9cP1aenoi" alt="织机展陈" style="width:100%;height:150px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">
+            <p style="font-size:11px;color:var(--text2);line-height:1.8;margin-top:10px">高精度扫描还原丝线光泽、纹理与材质细节，支持局部放大检视针脚与织造痕迹，让文物在数字空间「可近观、可细察」。</p>
+            <button class="btn-ghost" style="width:100%;margin-top:12px" data-toast="3D扫描模型加载中 · 演示版">打开3D模型</button>
+          </div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </section>
+
+    <!-- ===== 视图：创作（DIY 纹样创作） ===== -->
+    <section class="view" id="view-create" data-view="create">
+      <div class="topbar">
+        <div class="brand"><span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.6"><path d="M4 20c0-8 4-12 12-12M14 4l6 6-4 2-2 4-6-6 4-2z"/></svg></span><div><b>锦织时序</b><i>BROCADE</i></div></div>
+        <div class="crumb">创作 · 纹样工坊</div>
+      </div>
+
+      <div class="section-title"><span class="zh">DIY 纹样创作</span><span class="en">Pattern Studio</span></div>
+
+      <!-- 画布 -->
+      <div style="padding:0 20px">
+        <div class="canvas-frame">
+          <div class="canvas-stage" id="diy-canvas">
+            <img id="diy-img" src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TPb1bxousod70FxicxnczqL7nlb" alt="纹样线稿">
+            <div class="diy-colorlayer" id="diy-layer"></div>
+            <div class="canvas-grid"></div>
+            <div class="canvas-mark">BROCADE CHRONICLE</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+          <span class="pill" id="diy-name">缠枝莲纹 · 素稿</span>
+          <span class="pill red" id="diy-desc">实时预览</span>
+        </div>
+      </div>
+
+      <!-- 纹样素材 -->
+      <div class="subhead">纹样素材库 · 点击切换</div>
+      <div class="matrow" id="diy-mats">
+        <div class="mat on" data-src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TPb1bxousod70FxicxnczqL7nlb" data-name="缠枝莲纹"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TPb1bxousod70FxicxnczqL7nlb" alt="缠枝莲纹"><span>缠枝莲</span></div>
+        <div class="mat" data-src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc" data-name="缠枝宝仙纹"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc" alt="缠枝宝仙纹"><span>宝仙花</span></div>
+        <div class="mat" data-src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" data-name="团龙纹"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" alt="团龙纹"><span>团龙</span></div>
+        <div class="mat" data-src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/VLhCbfXjCoPUC0xw7FccX5U0nag" data-name="翟鸟纹"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/VLhCbfXjCoPUC0xw7FccX5U0nag" alt="翟鸟纹"><span>翟鸟</span></div>
+        <div class="mat" data-src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" data-name="凤穿牡丹"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" alt="凤穿牡丹"><span>凤穿牡丹</span></div>
+      </div>
+
+      <!-- 配色系统 -->
+      <div class="subhead">传统配色系统 · 点击试色</div>
+      <div class="palrow" id="diy-pals">
+        <div class="pal on" data-a="rgba(201,169,106,.28)" data-b="rgba(30,58,95,.45)" data-name="宋锦·藏青金"><i style="background:#1E3A5F"></i><i style="background:#C9A96A"></i><i style="background:#8E3B2A"></i><span>藏青金</span></div>
+        <div class="pal" data-a="rgba(192,86,63,.34)" data-b="rgba(126,31,24,.42)" data-name="缂丝·朱砂红"><i style="background:#7E1F18"></i><i style="background:#C0563F"></i><i style="background:#C9A96A"></i><span>朱砂红</span></div>
+        <div class="pal" data-a="rgba(47,79,62,.42)" data-b="rgba(14,23,48,.5)" data-name="云锦·松绿"><i style="background:#1F3A34"></i><i style="background:#9DBB8A"></i><i style="background:#C9A96A"></i><span>松石绿</span></div>
+        <div class="pal" data-a="rgba(122,91,138,.35)" data-b="rgba(59,45,74,.45)" data-name="苏绣·黛紫"><i style="background:#5B4A6B"></i><i style="background:#C97B84"></i><i style="background:#E6C79A"></i><span>黛紫</span></div>
+      </div>
+
+      <!-- 导出 -->
+      <div class="card" style="margin:16px 20px 0">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span class="pill">设计稿导出</span><h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">生成你的专属织绣图案</h3></div>
+        <p style="font-size:11px;color:var(--text2);line-height:1.8">当前组合可一键导出高清设计稿，并支持对接打样生产的商用授权方向。</p>
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn-ghost" style="flex:1" data-toast="已生成预览稿 · 演示版">导出PNG</button>
+          <button class="btn-gold" style="flex:1" data-toast="打样对接咨询已登记 · 演示版">对接打样</button>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </section>
+
+    <!-- ===== 视图：故事（纹样故事库） ===== -->
+    <section class="view" id="view-story" data-view="story">
+      <div class="topbar">
+        <div class="brand"><span class="mark"><svg width="18" height="18" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.6"><path d="M4 5h16M4 5l3 14h10l3-14M10 9h4M10 13h4"/></svg></span><div><b>锦织时序</b><i>BROCADE</i></div></div>
+        <div class="crumb">故事 · 纹样脉络</div>
+      </div>
+
+      <div class="section-title"><span class="zh">民俗故事集</span><span class="en">Folktales</span></div>
+      <div style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill">缠枝纹</span><h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">生生不息 · 绵延不绝</h3></div>
+          <p style="font-size:12px;color:var(--text2);line-height:2;margin-top:10px">缠枝纹取藤蔓连绵之势，喻家族兴旺、生生不息。纹样与织造工艺紧密相连——缠枝的婉转弧度，恰是挑花结本最考验手艺的曲线。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill red">民俗讲究</span><h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">蝠鹿鱼 · 福禄有余</h3></div>
+          <p style="font-size:12px;color:var(--text2);line-height:2;margin-top:10px">蝠谐音「福」，鹿谐音「禄」，鱼谐音「余」。江南织锦将民俗祈愿织入经纬，一件婚嫁织物上，往往藏着全家人的祝福。</p>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill">匠人叙事</span><h3 style="font-family:var(--serif);font-size:15px;color:var(--paper);letter-spacing:.06em">老绣娘选纹样配色的故事</h3></div>
+          <img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SFunbwMu5oKagCx5a2dcFp2Knfh" alt="绣娘" style="width:100%;height:140px;object-fit:cover;border-radius:10px;border:1px solid var(--line);margin-top:10px;object-position:center 30%">
+          <p style="font-size:12px;color:var(--text2);line-height:2;margin-top:10px">「纹样先要读懂，配色才有根。」老绣娘说，牡丹配大红是喜事，缠枝配藏青是书香，纹样与生活习俗相连，一针一线都是日子。</p>
+        </div>
+      </div>
+
+      <div class="section-title"><span class="zh">时代背景溯源</span><span class="en">Timeline</span></div>
+      <div class="tline" id="story-tline">
+        <div class="tline-item"><i class="on"></i><b>先秦 · 丝织起源</b><span>蚕桑丝织技艺萌发，经纬初成</span></div>
+        <div class="tline-item"><i></i><b>汉唐 · 织锦成型</b><span>斜纹经锦、纬锦相继发展，西域风入</span></div>
+        <div class="tline-item"><i></i><b>宋 · 宋锦确立</b><span>重锦典雅，文人审美入织</span></div>
+        <div class="tline-item"><i></i><b>元明 · 云锦兴盛</b><span>妆花织金，皇家御用，挑花结本成熟</span></div>
+        <div class="tline-item"><i></i><b>清 · 江南织造</b><span>三织造局督造，纹样体系完备</span></div>
+        <div class="tline-item"><i></i><b>今 · 数字新生</b><span>3D扫描、AI共创，非遗进入数字档案</span></div>
+      </div>
+
+      <div class="section-title"><span class="zh">艺术拓展</span><span class="en">Art Extension</span></div>
+      <div class="scrollx">
+        <div class="storycard">
+          <div class="ph"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" alt="缂丝凤凰牡丹"><span class="tag">缂丝 · 明</span></div>
+          <div class="bd"><h4>凤穿牡丹</h4><p>「承空视之，如雕镂之象」，诗画入织的极致。</p></div>
+        </div>
+        <div class="storycard">
+          <div class="ph"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/FAZybBxI3ouKI5x50fFcdVcQnbf" alt="苏绣牡丹"><span class="tag">苏绣 · 当代</span></div>
+          <div class="bd"><h4>花开富贵</h4><p>针线如笔墨，牡丹绣品与书画审美同源。</p></div>
+        </div>
+        <div class="storycard">
+          <div class="ph"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/AzYDbcvqsovkizxGCI0cKgFhnT7" alt="织机"><span class="tag">工艺 · 现场</span></div>
+          <div class="bd"><h4>机杼声声</h4><p>数字艺术与织机现场结合，非遗创作新灵感。</p></div>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+    </section>
+
+  </main>
+
+  <!-- ===== 底部导航 ===== -->
+  <nav class="tabbar" id="tabbar">
+    <button data-nav="#/home" class="on">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg>
+      <span>首页</span>
+    </button>
+    <button data-nav="#/study">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16M7 6v12M14 12v6"/></svg>
+      <span>研学</span>
+    </button>
+    <button data-nav="#/exhibit">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="2.6"/></svg>
+      <span>观展</span>
+    </button>
+    <button data-nav="#/create">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24"><path d="M4 20c0-8 4-12 12-12M14 4l6 6-4 2-2 4-6-6 4-2z"/></svg>
+      <span>创作</span>
+    </button>
+    <button data-nav="#/story">
+      <span class="dot"></span>
+      <svg viewBox="0 0 24 24"><path d="M4 5h16M4 5l3 14h10l3-14M10 9h4M10 13h4"/></svg>
+      <span>故事</span>
+    </button>
+  </nav>
+
+  <div id="transition" aria-hidden="true"><span class="t-line"></span></div>
+  <div id="toast"></div>
+</div>
+
+<script>
+/* ===== 视图路由 ===== */
+const VIEWS=['home','study','exhibit','create','story'];
+const VIEW_META={
+  study:{title:'研学 · 工艺'},
+  exhibit:{title:'观展 · 档案'},
+  create:{title:'创作 · 纹样工坊'},
+  story:{title:'故事 · 纹样脉络'}
+};
+let curView='home';
+function go(hash){
+  const seg=String(hash||'#/home').replace('#/','').split('?');
+  const name=seg[0],focus=seg[1]||'';
+  if(!VIEWS.includes(name))name='home';
+  curView=name;
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));
+  document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.nav==='#/'+name));
+  const crumb=document.getElementById('crumb-study');
+  if(crumb&&name==='study')crumb.textContent=VIEW_META.study.title;
+  document.getElementById('main').scrollTop=0;
+  if(name==='home')runHero();
+  flashTransition();
+  if(focus){
+    setTimeout(()=>{
+      const el=document.getElementById('focus-'+focus);
+      if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+    },160);
+  }
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-nav]');
+  if(t){e.preventDefault();const f=t.dataset.focus;go(t.dataset.nav+(f?'?'+f:''));return}
+});
+window.addEventListener('hashchange',()=>go(location.hash));
+if(!location.hash)history.replaceState(null,'','#/home');
+go(location.hash);
+
+/* ===== Toast ===== */
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ===== 首页 hero 入场 ===== */
+function runHero(){
+  const chars=document.querySelectorAll('#view-home .hero h1 .char');
+  chars.forEach((c,i)=>{c.style.animationDelay=(0.25+i*0.14)+'s';c.style.animation='rise .7s cubic-bezier(.2,.8,.3,1) forwards'});
+}
+/* 数据计数 */
+const counterIO=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting)return;
+    counterIO.unobserve(e.target);
+    const el=e.target,target=+el.dataset.count,start=performance.now(),dur=1100;
+    (function tick(now){
+      const p=Math.min((now-start)/dur,1),ease=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*ease).toLocaleString();
+      if(p<1)requestAnimationFrame(tick);
+    })(start);
+  });
+},{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>counterIO.observe(el));
+
+/* ===== 工艺卡片展开 ===== */
+document.querySelectorAll('.craft').forEach(c=>{
+  c.addEventListener('click',()=>{
+    const was=c.classList.contains('open');
+    document.querySelectorAll('.craft.open').forEach(o=>o.classList.remove('open'));
+    if(!was)c.classList.add('open');
+  });
+});
+
+/* ===== 穿越时间 ===== */
+const TL=[
+  '设计师依纹样章法绘制意匠图，把图案拆解为经纬坐标，一稿定千年。',
+  '以丝为经、棉为纬，对照意匠图逐格挑花结本——这是古代织锦的「程序」，错一根线，纹样便前功尽弃。',
+  '经线按序排布上机，穿综过筘。大花楼织机由1924个构件以榫卯拼接，高四米、长五米余。',
+  '拽花工在上提经，织手在下挖花盘织，换梭如飞。两人默契配合，一日仅成五厘米，寸锦寸金。',
+  '落机、修剪、整烫、检验，一件织锦自此入世，经纬之间皆是人手温度。'
+];
+let tlIdx=0;
+const tlSteps=document.getElementById('tl-steps'),tlDesc=document.getElementById('tl-desc');
+function tlRender(){
+  tlSteps.dataset.p=tlIdx+1;
+  tlSteps.querySelectorAll('.tl-item').forEach((it,i)=>it.classList.toggle('on',i<=tlIdx));
+  tlDesc.textContent=TL[tlIdx];
+}
+document.getElementById('tl-next').addEventListener('click',()=>{tlIdx=Math.min(tlIdx+1,TL.length-1);tlRender()});
+document.getElementById('tl-prev').addEventListener('click',()=>{tlIdx=Math.max(tlIdx-1,0);tlRender()});
+tlRender();
+
+/* ===== 虚拟织机 ===== */
+const LOOM=[
+  {do:'穿经',status:'正在将丝线逐一穿入综眼…',desc:'丝线已穿过综眼，经面排布完成。点击「打纬」，让梭子带着纬线飞过经面。',line:false,warp:true},
+  {do:'打纬',status:'梭子掠过经面，筘齿将纬线压实…',desc:'纬线已织入，筘齿压实。点击「换梭」，不同色纬轮番上场。',line:true,warp:true},
+  {do:'换梭',status:'蓝、金、朱各色小梭交替…',desc:'色纬渐次织入，纹样轮廓开始显形。点击「提花」，让花本控制经线起落。',line:true,warp:true},
+  {do:'提花',status:'花本提经，纹样在经纬间浮现…',desc:'图案完整浮现，一件织锦在虚拟织机上诞生。点击「重置」再来一次。',line:true,warp:true}
+];
+let loomIdx=-1;
+const loomDo=document.getElementById('loom-do'),loomStatus=document.getElementById('loom-status'),
+      loomLine=document.getElementById('loom-line'),loomWarp=document.getElementById('loom-warp'),
+      loomShuttle=document.getElementById('loom-shuttle'),loomCloth=document.getElementById('loom-cloth');
+function loomReset(){
+  loomIdx=-1;loomStatus.textContent='点击「穿经」开始：将丝线逐一穿入综眼，排布经面。';
+  loomDo.textContent='穿经';loomWarp.classList.remove('done');loomLine.classList.remove('run');
+  loomShuttle.classList.remove('run');loomCloth.classList.remove('grow');
+}
+loomDo.addEventListener('click',()=>{
+  if(loomIdx>=LOOM.length-1){loomReset();return}
+  loomIdx++;
+  const s=LOOM[loomIdx];
+  loomDo.textContent=s.do;
+  loomStatus.textContent=s.desc;
+  loomWarp.classList.toggle('done',s.warp);
+  loomLine.classList.toggle('run',s.line);
+  loomShuttle.classList.toggle('run',s.line);
+  if(loomIdx>=2)loomCloth.classList.add('grow');
+  if(loomIdx===LOOM.length-1)toast('织造完成 · 经纬成锦');
+});
+document.getElementById('loom-reset').addEventListener('click',loomReset);
+
+/* ===== 角色扮演 ===== */
+document.querySelectorAll('.role').forEach(r=>{
+  r.addEventListener('click',()=>{
+    document.querySelectorAll('.role').forEach(x=>x.classList.remove('picked'));
+    r.classList.add('picked');
+    toast('你已扮演「'+r.dataset.role+'」，协作任务已接取 · 演示版');
+  });
+});
+
+/* ===== 观展器 ===== */
+const vImg=document.getElementById('viewer-img'),vTag=document.getElementById('viewer-tag');
+document.querySelectorAll('.vt').forEach(v=>{
+  v.addEventListener('click',()=>{
+    document.querySelectorAll('.vt').forEach(x=>x.classList.remove('on'));
+    v.classList.add('on');
+    vImg.style.opacity=0;
+    setTimeout(()=>{vImg.src=v.dataset.vimg;vImg.style.opacity=1;vTag.textContent=v.dataset.vtag},220);
+  });
+});
+const lightRange=document.getElementById('light-range'),lightVal=document.getElementById('light-val');
+lightRange.addEventListener('input',()=>{
+  const v=+lightRange.value;
+  vImg.style.filter=`brightness(${v/100}) contrast(${1.04+(v-100)*0.0006})`;
+  lightVal.textContent=v<78?'暗室烛光':(v>125?'强光细看':'自然光');
+});
+
+/* ===== 档案Tab ===== */
+document.querySelectorAll('#pattern-tabs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#pattern-tabs button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const k=b.dataset.ptab;
+    document.querySelectorAll('.ptab').forEach(p=>p.style.display='none');
+    document.getElementById('ptab-'+k).style.display='block';
+  });
+});
+
+/* ===== DIY 画布 ===== */
+const diyImg=document.getElementById('diy-img'),diyLayer=document.getElementById('diy-layer'),diyName=document.getElementById('diy-name');
+document.querySelectorAll('#diy-mats .mat').forEach(m=>{
+  m.addEventListener('click',()=>{
+    document.querySelectorAll('#diy-mats .mat').forEach(x=>x.classList.remove('on'));
+    m.classList.add('on');
+    diyImg.style.opacity=0;
+    setTimeout(()=>{diyImg.src=m.dataset.src;diyImg.style.opacity=1;diyName.textContent=m.dataset.name+' · 素稿'},220);
+  });
+});
+document.querySelectorAll('#diy-pals .pal').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('#diy-pals .pal').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on');
+    diyLayer.style.background=`linear-gradient(160deg, ${p.dataset.a}, ${p.dataset.b})`;
+    diyName.textContent=document.querySelector('#diy-mats .mat.on').dataset.name+' · '+p.dataset.name;
+  });
+});
+diyLayer.style.background='linear-gradient(160deg, rgba(201,169,106,.28), rgba(30,58,95,.45))';
+document.querySelectorAll('[data-toast]').forEach(b=>{
+  b.addEventListener('click',()=>toast(b.dataset.toast));
+});
+
+/* ===== Splash 启动 ===== */
+setTimeout(()=>{const s=document.getElementById("splash");if(s)s.classList.add("done")},2650);
+
+/* ===== 视图转场金线 ===== */
+function flashTransition(){
+  const tr=document.getElementById('transition');
+  if(!tr)return;
+  tr.classList.remove('show');void tr.offsetWidth;tr.classList.add('show');
+  setTimeout(()=>tr.classList.remove('show'),470);
+}
+
+/* ===== 观展聚光细看 ===== */
+const vStage=document.getElementById('viewer-stage'),vSpot=document.getElementById('spotlight'),vHint=document.querySelector('.viewer-hint');
+function moveSpot(x,y){
+  const r=vStage.getBoundingClientRect();
+  const px=((x-r.left)/r.width*100).toFixed(1),py=((y-r.top)/r.height*100).toFixed(1);
+  vSpot.style.background=`radial-gradient(132px 132px at ${px}% ${py}%,transparent 0%,transparent 40%,rgba(8,13,28,.58) 66%,rgba(8,13,28,.9) 100%)`;
+}
+vStage.addEventListener('pointermove',e=>{moveSpot(e.clientX,e.clientY);vHint.classList.add('show')});
+vStage.addEventListener('pointerleave',()=>vHint.classList.remove('show'));
+vStage.addEventListener('dblclick',()=>vStage.classList.toggle('zoomed'));
+document.getElementById('viewer-full').addEventListener('click',()=>{
+  const zoomed=vStage.classList.toggle('zoomed');
+  document.getElementById('viewer-full').textContent=zoomed?'退出细看 · 拖动检视':'全屏细看 · 细节放大';
+  if(zoomed)toast('已放大 · 拖动画面检视针脚纹理');
+});
+
+/* ===== DIY 拖拽织入画布 ===== */
+const diyCanvas=document.querySelector('.canvas-stage');
+document.querySelectorAll('#diy-mats .mat').forEach(m=>{
+  m.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    const ghost=m.querySelector('img').cloneNode();
+    ghost.style.cssText='position:fixed;width:88px;height:88px;border-radius:12px;object-fit:cover;pointer-events:none;z-index:150;opacity:.88;border:2px solid var(--gold-soft);box-shadow:0 10px 30px rgba(0,0,0,.5)';
+    document.body.appendChild(ghost);
+    const mv=e=>{ghost.style.left=(e.clientX-44)+'px';ghost.style.top=(e.clientY-44)+'px'};
+    const up=e=>{
+      const r=diyCanvas.getBoundingClientRect();
+      if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){
+        document.querySelectorAll('#diy-mats .mat').forEach(x=>x.classList.remove('on'));
+        m.classList.add('on');
+        diyImg.style.opacity=0;
+        setTimeout(()=>{diyImg.src=m.dataset.src;diyImg.style.opacity=1;diyName.textContent=m.dataset.name+' · 素稿';},220);
+        diyCanvas.classList.add('drop');setTimeout(()=>diyCanvas.classList.remove('drop'),550);
+        toast('纹样已织入画布 · '+m.dataset.name);
+      }
+      ghost.remove();
+      window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up);
+    };
+    window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);
+  });
+});
+/* 画布内拖动纹样 */
+let dDrag=null,dx0=0,dy0=0;
+diyImg.addEventListener('pointerdown',e=>{
+  dDrag=true;dx0=e.clientX;dy0=e.clientY;
+  const mv=e=>{
+    const nx=parseFloat(diyImg.dataset.tx||0)+(e.clientX-dx0),ny=parseFloat(diyImg.dataset.ty||0)+(e.clientY-dy0);
+    dx0=e.clientX;dy0=e.clientY;
+    diyImg.dataset.tx=nx;diyImg.dataset.ty=ny;
+    diyImg.style.transform=`translate(${nx}px,${ny}px)`;
+  };
+  const up=()=>{dDrag=false;window.removeEventListener('pointermove',mv);window.removeEventListener('pointerup',up)};
+  window.addEventListener('pointermove',mv);window.addEventListener('pointerup',up);
+});
+
+/* ===== 首页滚动显现 ===== */
+const revealIO=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealIO.unobserve(e.target)}});
+},{threshold:.12});
+const revealEls=[...document.querySelectorAll('#view-home .grid6 .card'),...document.querySelectorAll('#view-home .scrollx .storycard'),...document.querySelectorAll('#view-home .card[data-focus="view"]')];
+revealEls.forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%2*0.07)+'s';revealIO.observe(el)});
+</script>
+</body>
+</html>
