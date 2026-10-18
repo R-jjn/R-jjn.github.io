@@ -68,7 +68,7 @@ body{
 #loader{
   position:absolute;inset:0;z-index:200;display:flex;flex-direction:column;
   align-items:center;justify-content:center;overflow:hidden;
-  background:#231108;
+  background:#231108;padding:88px 22px calc(40px + env(safe-area-inset-bottom));
   transition:opacity .6s ease,visibility .6s;
 }
 #loader.out{opacity:0;visibility:hidden;pointer-events:none}
@@ -113,14 +113,14 @@ body{
 .ld-desc{max-width:296px;margin-top:16px;font-size:13px;line-height:2.05;color:var(--ink);
   text-align:center;letter-spacing:.07em;opacity:0;z-index:2;padding:0 22px}
 .ld-desc.go{animation:rise .9s .9s ease both}
-.ld-prog{position:absolute;left:0;right:0;bottom:96px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.ld-prog{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:30px}
 .ld-prog .lp-lab{font-size:10px;letter-spacing:.4em;color:var(--text3)}
 .ld-prog .lp-bar{width:176px;height:2px;background:rgba(201,169,106,.16);border-radius:99px;overflow:hidden;position:relative}
 .ld-prog .lp-bar i{position:absolute;inset:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft));transform-origin:left;transform:scaleX(0);transition:transform .18s linear}
 .ld-prog .lp-num{font-family:var(--serif);font-size:12px;color:var(--gold-soft);letter-spacing:.2em}
 .ld-enter{
-  position:absolute;left:50%;bottom:172px;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:26px;opacity:0;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+  margin-top:26px;opacity:0;pointer-events:none;
 }
 .ld-enter.show{opacity:1;pointer-events:auto;animation:rise .6s ease both}
 .ld-enter button{
@@ -167,10 +167,7 @@ body{
 #dock button .d-ico{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
 #dock button.on{color:#5E2A15;background:linear-gradient(145deg,#E8CF9A,#B08E4E);font-weight:700;box-shadow:0 4px 14px rgba(201,169,106,.3)}
 /* 顶章（全局） */
-#seal{
-  position:absolute;top:calc(14px + env(safe-area-inset-top));left:16px;z-index:85;
-  display:flex;align-items:center;gap:9px;cursor:pointer;opacity:0;pointer-events:none;transition:.5s;
-}
+#seal{display:none!important}
 #seal.show{opacity:1;pointer-events:auto}
 #seal .s-mark{width:34px;height:34px;border:1px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(145deg,#4C2E15,#3D2412)}
@@ -254,7 +251,7 @@ body{
 .g-head .ch-no{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:4px 12px;flex:none}
 .g-head h2{font-family:var(--serif);font-size:19px;letter-spacing:.24em;color:var(--paper);font-weight:700}
 .g-page{margin-left:auto;font-family:var(--serif);font-size:11px;letter-spacing:.2em;color:var(--gold-soft)}
-.g-view{position:absolute;top:60px;left:0;right:0;bottom:130px;overflow:hidden}
+.g-view{position:absolute;top:60px;left:0;right:0;bottom:164px;overflow:hidden}
 .g-track{display:flex;height:100%;transition:transform .55s cubic-bezier(.25,.85,.3,1);touch-action:pan-y}
 .g-page-c{flex:0 0 100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 22px 6px;overflow:hidden}
 .g-img{position:relative;width:100%;max-width:430px;height:min(48dvh,430px);border-radius:20px;overflow:hidden;
@@ -269,8 +266,8 @@ body{
 .g-body h3{font-family:var(--serif);font-size:21px;letter-spacing:.14em;color:var(--paper);font-weight:700}
 .g-en{display:block;margin-top:7px;font-family:var(--serif);font-size:8.5px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
 .g-body p{margin-top:11px;font-size:13.5px;line-height:1.95;color:var(--text2);letter-spacing:.03em}
-.g-quote{margin-top:11px;font-family:var(--serif);font-size:12px;letter-spacing:.1em;color:var(--gold-soft)}
-.g-nav{position:absolute;left:0;right:0;bottom:104px;z-index:8;display:flex;align-items:center;justify-content:center;gap:18px}
+.g-quote{margin-top:11px;margin-bottom:30px;font-family:var(--serif);font-size:12px;letter-spacing:.1em;color:var(--gold-soft)}
+.g-nav{position:absolute;left:0;right:0;bottom:96px;z-index:8;display:flex;align-items:center;justify-content:center;gap:18px}
 .g-nav button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(201,169,106,.45);background:rgba(59,34,18,.82);
   color:var(--gold-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.25s;padding:0}
 .g-nav button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
