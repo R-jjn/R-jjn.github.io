@@ -1,1701 +1,727 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>锦织时序 · 织梦长卷 — 江南织锦纹样沉浸式H5</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232B160B'/%3E%3Cpath d='M14 18h36v6H14zM14 30h36v4H14zM14 42h36v6H14z' fill='%23C9A96A'/%3E%3Cpath d='M32 8v48' stroke='%23C9A96A' stroke-width='3'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
-<style>
-/* ============================================================
-   锦织时序 · 织梦长卷 — 设计令牌
-   ============================================================ */
-:root{
-  --bg:#2B160B;
-  --bg2:#3B2212;
-  --bg3:#4C2B14;
-  --card:#3D2412;
-  --card2:#4C2F17;
-  --gold:#C9A96A;
-  --gold-soft:#E6CE97;
-  --gold-deep:#8C6F3A;
-  --cinnabar:#C0563F;
-  --cinnabar-deep:#8E3B2A;
-  --paper:#F3ECDC;
-  --ink:#E8E1CE;
-  --text2:#C9A984;
-  --text3:#96724E;
-  --line:rgba(201,169,106,.32);
-  --line-soft:rgba(178,150,110,.16);
-  --serif:"Noto Serif SC","Songti SC","SimSun",serif;
-  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
-  --shadow:0 14px 40px rgba(25,10,4,.55);
-}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{
-  font-family:var(--sans);
-  color:var(--ink);
-  background:
-    radial-gradient(1200px 600px at 50% -10%, #412913 0%, transparent 60%),
-    radial-gradient(900px 500px at 100% 100%, #3C2212 0%, transparent 55%),
-    #2B160B;
-  display:flex;justify-content:center;align-items:stretch;
-  -webkit-font-smoothing:antialiased;
-  overscroll-behavior:none;
-}
-#app{
-  position:relative;width:100%;max-width:480px;height:100dvh;
-  background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
-  overflow:hidden;display:flex;flex-direction:column;
-}
-@media(min-width:560px){
-  body{padding:20px 0;align-items:center}
-  #app{border-radius:30px;border:1px solid var(--line);box-shadow:var(--shadow);height:min(900px,94dvh)}
-}
-/* 织锦经纬底纹（全局浅层） */
-#app::before{
-  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.45;
-  background:
-    repeating-linear-gradient(0deg, rgba(201,169,106,.035) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(90deg, rgba(201,169,106,.025) 0 1px, transparent 1px 7px);
-}
-/* 粒子层 */
-#fx{position:absolute;inset:0;z-index:90;pointer-events:none}
-/* ============================================================
-   载入序章 LOADER — 特别突出的加载动画
-   ============================================================ */
-#loader{
-  position:absolute;inset:0;z-index:200;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;overflow:hidden;
-  background:#231108;padding:88px 22px calc(40px + env(safe-area-inset-bottom));
-  transition:opacity .6s ease,visibility .6s;
-}
-#loader.out{opacity:0;visibility:hidden;pointer-events:none}
-#loader .ld-bg{position:absolute;inset:0}
-#loader .ld-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%;filter:brightness(.42) saturate(1.06);transform:scale(1.06)}
-#loader .ld-veil{position:absolute;inset:0;background:
-  radial-gradient(620px 430px at 50% 32%, rgba(59,34,18,.3) 0%, rgba(35,17,8,.72) 56%, rgba(35,17,8,.96) 100%)}
-#loader::before{content:"";position:absolute;inset:0;opacity:.55;z-index:1;
-  background:repeating-linear-gradient(0deg,rgba(201,169,106,.06) 0 1px,transparent 1px 24px),
-             repeating-linear-gradient(90deg,rgba(201,169,106,.06) 0 1px,transparent 1px 24px)}
-#loader::after{content:"";position:absolute;inset:0;z-index:1;
-  background:radial-gradient(220px 220px at 50% 40%, rgba(230,206,151,.1), transparent 70%)}
-.ld-mark{position:relative;width:116px;height:116px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  border:1px solid rgba(201,169,106,.55);background:rgba(59,34,18,.62);backdrop-filter:blur(3px);
-  box-shadow:0 0 42px rgba(201,169,106,.16), inset 0 0 26px rgba(35,17,8,.4);z-index:2}
-.ld-mark::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1px dashed rgba(201,169,106,.42);animation:ldSpin 26s linear infinite}
-@keyframes ldSpin{to{transform:rotate(360deg)}}
-.ld-weave{position:relative;width:96px;height:96px;opacity:.96}
-.ld-weave svg{width:100%;height:100%;stroke:var(--gold-soft);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;animation:ldPhotoIn 1.6s ease both}
-@keyframes ldPhotoIn{from{opacity:0;transform:scale(1.12)}to{opacity:1;transform:scale(1)}}
-.ld-title{
-  font-family:var(--serif);font-size:42px;font-weight:900;letter-spacing:.26em;
-  color:transparent;display:flex;padding-left:.26em;margin-top:14px;position:relative;z-index:2;
-  background:linear-gradient(180deg,#F3E6C2 8%,#D8BC7E 40%,#A9854A 72%,#C9A96A 100%);
-  -webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 3px 14px rgba(201,169,106,.35));
-}
-.ld-title span{display:inline-block;opacity:0;transform:translateY(22px) scale(.92);filter:blur(6px)}
-.ld-title.go span{animation:ldChar .75s cubic-bezier(.18,.8,.3,1) forwards}
-.ld-title.go span:nth-child(2){animation-delay:.14s}
-.ld-title.go span:nth-child(3){animation-delay:.28s}
-.ld-title.go span:nth-child(4){animation-delay:.42s}
-@keyframes ldChar{to{opacity:1;transform:none;filter:blur(0)}}
-.ld-title::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold-soft),transparent);transform:scaleX(0)}
-.ld-title.go::after{animation:ldUnder .8s .6s cubic-bezier(.2,.8,.3,1) forwards}
-@keyframes ldUnder{to{transform:scaleX(1)}}
-.ld-en{font-family:var(--serif);font-size:10px;letter-spacing:.66em;color:var(--gold);
-  margin-top:20px;opacity:0;text-transform:uppercase;z-index:2}
-.ld-en.go{animation:rise .7s .7s ease both}
-.ld-kicker{font-size:10px;letter-spacing:.5em;color:var(--gold-soft);margin-bottom:16px;opacity:0;z-index:2;padding-left:.5em}
-.ld-kicker.go{animation:rise .8s .4s ease both}
-.ld-desc{max-width:296px;margin-top:16px;font-size:13px;line-height:2.05;color:var(--ink);
-  text-align:center;letter-spacing:.07em;opacity:0;z-index:2;padding:0 22px}
-.ld-desc.go{animation:rise .9s .9s ease both}
-.ld-prog{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:30px}
-.ld-prog .lp-lab{font-size:10px;letter-spacing:.4em;color:var(--text3)}
-.ld-prog .lp-bar{width:176px;height:2px;background:rgba(201,169,106,.16);border-radius:99px;overflow:hidden;position:relative}
-.ld-prog .lp-bar i{position:absolute;inset:0;background:linear-gradient(90deg,var(--gold-deep),var(--gold-soft));transform-origin:left;transform:scaleX(0);transition:transform .18s linear}
-.ld-prog .lp-num{font-family:var(--serif);font-size:12px;color:var(--gold-soft);letter-spacing:.2em}
-.ld-enter{
-  display:flex;flex-direction:column;align-items:center;gap:18px;
-  margin-top:26px;opacity:0;pointer-events:none;
-}
-.ld-enter.show{opacity:1;pointer-events:auto;animation:rise .6s ease both}
-.ld-enter button{
-  font-family:var(--serif);font-size:15px;letter-spacing:.42em;color:#5E2A15;font-weight:700;
-  background:linear-gradient(145deg,#E8CF9A,#B08E4E);border:none;border-radius:99px;
-  padding:13px 34px 13px 42px;cursor:pointer;position:relative;box-shadow:0 10px 30px rgba(201,169,106,.3);
-}
-.ld-enter button::before{content:"";position:absolute;inset:-6px;border-radius:99px;border:1px solid rgba(201,169,106,.5);
-  animation:ldPulse 1.9s ease-out infinite}
-@keyframes ldPulse{0%{transform:scale(.92);opacity:.9}70%{transform:scale(1.14);opacity:0}100%{opacity:0}}
-.ld-enter button:active{transform:scale(.96)}
-.ld-enter .ld-hint{font-size:10px;letter-spacing:.3em;color:var(--text3);margin-top:2px;opacity:.85}
-.ld-grain{position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E")}
-/* ============================================================
-   主舞台与章节
-   ============================================================ */
-#stage{position:absolute;inset:0;z-index:1;user-select:none;-webkit-user-select:none}
-.ch{position:absolute;inset:0;display:none;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;overscroll-behavior:contain}
-.ch::-webkit-scrollbar{display:none}
-.ch.on{display:block;animation:chIn .5s cubic-bezier(.22,.8,.32,1) both}
-@keyframes chIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-/* 章节转场金幕 */
-#veil{position:absolute;inset:0;z-index:150;pointer-events:none;opacity:0;visibility:hidden;display:flex;align-items:center;justify-content:center}
-#veil.show{opacity:1;visibility:visible;animation:veilFade .5s ease}
-#veil .v-line{width:60px;height:1px;background:var(--gold-soft);box-shadow:0 0 16px var(--gold);transform:scaleX(0)}
-#veil.show .v-line{animation:vGrow .36s .05s cubic-bezier(.2,.8,.3,1) forwards}
-@keyframes vGrow{to{transform:scaleX(1)}}
-@keyframes veilFade{0%{opacity:1}100%{opacity:0}}
-/* 章节坞 */
-#dock{
-  position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);
-  z-index:80;display:flex;gap:6px;padding:7px;border-radius:99px;
-  background:rgba(35,17,8,.82);border:1px solid var(--line);
-  backdrop-filter:blur(10px);box-shadow:0 12px 34px rgba(25,10,4,.6);
-  opacity:0;pointer-events:none;transition:.5s;
-}
-#dock.show{opacity:1;pointer-events:auto}
-#dock button{
-  border:none;background:none;cursor:pointer;display:flex;align-items:center;gap:6px;
-  font-family:var(--serif);font-size:12px;letter-spacing:.2em;color:var(--text3);
-  padding:8px 13px;border-radius:99px;transition:.28s;position:relative;
-}
-#dock button .d-ico{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
-#dock button.on{color:#5E2A15;background:linear-gradient(145deg,#E8CF9A,#B08E4E);font-weight:700;box-shadow:0 4px 14px rgba(201,169,106,.3)}
-/* 顶章（全局） */
-#seal{display:none!important}
-#seal.show{opacity:1;pointer-events:auto}
-#seal .s-mark{width:34px;height:34px;border:1px solid var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(145deg,#4C2E15,#3D2412)}
-#seal .s-txt b{font-family:var(--serif);font-size:14px;letter-spacing:.2em;color:var(--paper);display:block}
-#seal .s-txt i{font-style:normal;font-size:8px;letter-spacing:.4em;color:var(--gold);display:block;margin-top:1px}
-/* 章节题头 */
-.ch-head{position:sticky;top:0;z-index:20;padding:16px 20px 12px;
-  background:linear-gradient(180deg,rgba(43,22,11,.96) 55%,rgba(43,22,11,0));
-  display:flex;align-items:center;gap:12px;backdrop-filter:blur(4px)}
-.ch-head .ch-no{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:4px 12px;flex:none}
-.ch-head h2{font-family:var(--serif);font-size:19px;letter-spacing:.22em;color:var(--paper);font-weight:700}
-.ch-head .ch-en{margin-left:auto;font-family:var(--serif);font-size:9px;letter-spacing:.3em;color:var(--text3)}
-.ch-hint{padding:0 20px 14px;font-size:11px;color:var(--text3);letter-spacing:.14em;line-height:1.9;display:flex;align-items:center;gap:8px}
-.ch-hint svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:1.6;flex:none}
-/* ============================================================
-   第一章 · 织梦（长页叙事）
-   ============================================================ */
-.j-hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 120px;overflow:hidden}
-.j-hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%;filter:brightness(.55) saturate(1.08);transform:scale(1.08)}
-.j-hero .veil{position:absolute;inset:0;background:
-  linear-gradient(180deg,rgba(43,22,11,.28) 0%,rgba(43,22,11,.42) 38%,rgba(35,17,8,.96) 86%,var(--bg) 100%)}
-.j-hero .frame{position:absolute;inset:18px;border:1px solid rgba(201,169,106,.4);border-radius:16px;pointer-events:none}
-.j-hero .frame::before,.j-hero .frame::after{content:"";position:absolute;width:30px;height:30px;border:2px solid var(--gold-soft)}
-.j-hero .frame::before{left:-1px;top:-1px;border-right:none;border-bottom:none;border-radius:16px 0 0 0}
-.j-hero .frame::after{right:-1px;bottom:-1px;border-left:none;border-top:none;border-radius:0 0 16px 0}
-.j-kicker{display:flex;align-items:center;gap:12px;font-size:9px;letter-spacing:.44em;color:var(--gold-soft);margin-bottom:16px}
-.j-kicker::before{content:"";width:36px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
-.j-hero h1{font-family:var(--serif);font-weight:900;font-size:62px;letter-spacing:.18em;color:var(--paper);
-  text-shadow:0 2px 30px rgba(0,0,0,.55);line-height:1.15;display:flex}
-.j-hero h1 span{opacity:0;transform:translateY(30px);display:inline-block}
-.j-hero h1.go span{animation:jChar .8s cubic-bezier(.2,.8,.3,1) forwards}
-.j-hero h1.go span:nth-child(2){animation-delay:.16s}
-.j-hero h1.go span:nth-child(3){animation-delay:.32s}
-@keyframes jChar{to{opacity:1;transform:none}}
-.j-sub{margin-top:16px;font-family:var(--serif);font-size:12px;letter-spacing:.46em;color:var(--gold-soft);opacity:0}
-.j-hero.go .j-sub{animation:rise .9s .5s ease both}
-.j-desc{margin-top:18px;font-size:13px;line-height:2;color:var(--text2);max-width:88%;opacity:0}
-.j-hero.go .j-desc{animation:rise .9s .7s ease both}
-.j-scrollcue{position:absolute;left:50%;bottom:96px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0}
-.j-hero.go .j-scrollcue{animation:rise 1s 1s ease both}
-.j-scrollcue .sc-line{width:1px;height:42px;background:rgba(201,169,106,.25);overflow:hidden;position:relative}
-.j-scrollcue .sc-line::after{content:"";position:absolute;left:0;top:-40%;width:100%;height:40%;background:linear-gradient(180deg,transparent,var(--gold-soft));animation:scDrop 1.7s ease-in-out infinite}
-@keyframes scDrop{0%{top:-40%}100%{top:110%}}
-.j-scrollcue span{font-size:9px;letter-spacing:.4em;color:var(--text3)}
-@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
-/* 叙事节拍 */
-.beat{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:40px 24px 30px;overflow:hidden}
-.beat .b-no{position:absolute;top:9vh;right:18px;font-family:var(--serif);font-size:104px;font-weight:900;
-  color:transparent;-webkit-text-stroke:1px rgba(201,169,106,.16);letter-spacing:.04em;line-height:1;pointer-events:none}
-.beat .b-img{position:relative;width:100%;height:46vh;min-height:260px;border-radius:18px;overflow:hidden;
-  border:1px solid var(--line);box-shadow:var(--shadow)}
-.beat .b-img img{width:100%;height:112%;object-fit:cover;will-change:transform}
-.beat .b-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,22,11,0) 52%,rgba(43,22,11,.58) 100%)}
-.beat .b-tag{position:absolute;left:12px;top:12px;z-index:2;font-size:9px;letter-spacing:.22em;color:var(--gold-soft);
-  background:rgba(35,17,8,.7);border:1px solid var(--line);padding:4px 12px;border-radius:99px}
-.beat .b-body{margin-top:22px;position:relative}
-.beat .b-body::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:2px;background:linear-gradient(180deg,var(--gold),transparent)}
-.beat .b-body h3{font-family:var(--serif);font-size:23px;letter-spacing:.16em;color:var(--paper);font-weight:700;padding-left:16px}
-.beat .b-body .b-en{display:block;font-family:var(--serif);font-size:9px;letter-spacing:.3em;color:var(--gold);margin-top:6px;padding-left:16px}
-.beat .b-body p{font-size:14px;line-height:2.15;color:var(--text2);margin-top:14px;padding-left:16px;letter-spacing:.03em}
-.beat .b-quote{margin-top:16px;padding-left:16px;font-family:var(--serif);font-size:11px;letter-spacing:.14em;color:var(--text3)}
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.3,1)}
-.reveal.in{opacity:1;transform:none}
-/* 章节出口 */
-.j-exit{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:50px 28px;text-align:center;position:relative;overflow:hidden}
-.j-exit .x-orn{width:1px;height:60px;background:linear-gradient(180deg,transparent,var(--gold))}
-.j-exit p{font-family:var(--serif);font-size:12px;letter-spacing:.4em;color:var(--text3);line-height:2.4}
-.j-exit button{
-  font-family:var(--serif);font-size:14px;letter-spacing:.3em;color:#5E2A15;font-weight:700;
-  background:linear-gradient(145deg,#E8CF9A,#B08E4E);border:none;border-radius:99px;padding:14px 30px;cursor:pointer;
-  box-shadow:0 10px 30px rgba(201,169,106,.28);position:relative;overflow:hidden;
-}
-.j-exit button::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg)}
-.j-exit button:active{transform:scale(.96)}
-.j-exit button:active::after{animation:sheen .55s ease}
-@keyframes sheen{to{left:140%}}
-/* ===== 第一章 · 织造之法（翻页图册） ===== */
-#ch-journey{overflow:hidden}
-.g-head{position:absolute;left:0;right:0;top:0;z-index:8;padding:15px 20px 14px;display:flex;align-items:center;gap:12px;
-  background:linear-gradient(180deg,rgba(43,22,11,.96) 40%,rgba(43,22,11,0));pointer-events:none}
-.g-head .ch-no{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:4px 12px;flex:none}
-.g-head h2{font-family:var(--serif);font-size:19px;letter-spacing:.24em;color:var(--paper);font-weight:700}
-.g-page{margin-left:auto;font-family:var(--serif);font-size:11px;letter-spacing:.2em;color:var(--gold-soft)}
-.g-view{position:absolute;top:60px;left:0;right:0;bottom:164px;overflow:hidden}
-.g-track{display:flex;height:100%;transition:transform .55s cubic-bezier(.25,.85,.3,1);touch-action:pan-y}
-.g-page-c{flex:0 0 100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 22px 6px;overflow:hidden}
-.g-img{position:relative;width:100%;max-width:430px;height:min(48dvh,430px);border-radius:20px;overflow:hidden;
-  border:1px solid rgba(201,169,106,.3);box-shadow:0 22px 60px rgba(35,17,8,.55)}
-.g-img img{width:100%;height:100%;object-fit:cover;object-position:center}
-.g-img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,22,11,0) 58%,rgba(43,22,11,.66) 100%)}
-.g-no{position:absolute;left:16px;top:12px;z-index:2;font-family:var(--serif);font-size:26px;font-weight:900;color:var(--gold-soft);
-  text-shadow:0 2px 12px rgba(0,0,0,.55)}
-.g-tag{position:absolute;left:14px;bottom:14px;z-index:2;font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--paper);
-  border:1px solid rgba(201,169,106,.55);border-radius:99px;padding:4px 12px;background:rgba(35,17,8,.5)}
-.g-body{margin-top:15px;text-align:center;max-width:430px;padding:0 4px}
-.g-body h3{font-family:var(--serif);font-size:21px;letter-spacing:.14em;color:var(--paper);font-weight:700}
-.g-en{display:block;margin-top:7px;font-family:var(--serif);font-size:8.5px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
-.g-body p{margin-top:11px;font-size:13.5px;line-height:1.95;color:var(--text2);letter-spacing:.03em}
-.g-quote{margin-top:11px;margin-bottom:30px;font-family:var(--serif);font-size:12px;letter-spacing:.1em;color:var(--gold-soft)}
-.g-nav{position:absolute;left:0;right:0;bottom:96px;z-index:8;display:flex;align-items:center;justify-content:center;gap:18px}
-.g-nav button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(201,169,106,.45);background:rgba(59,34,18,.82);
-  color:var(--gold-soft);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.25s;padding:0}
-.g-nav button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.g-nav button:active{transform:scale(.9)}
-.g-nav button[disabled]{opacity:.3;pointer-events:none}
-.g-dots{display:flex;gap:7px;align-items:center}
-.g-dots i{width:6px;height:6px;border-radius:50%;background:rgba(201,169,106,.28);transition:.3s;cursor:pointer}
-.g-dots i.on{background:var(--gold-soft);box-shadow:0 0 0 3px rgba(201,169,106,.2);transform:scale(1.2)}
-.g-cta{position:absolute;left:0;right:0;bottom:160px;z-index:8;display:none;justify-content:center;padding:0 22px}
-.g-cta.show{display:flex;animation:rise .5s ease both}
-.g-cta button{
-  font-family:var(--serif);font-size:14px;letter-spacing:.3em;color:#5E2A15;font-weight:700;
-  background:linear-gradient(145deg,#E8CF9A,#B08E4E);border:none;border-radius:99px;padding:14px 30px;cursor:pointer;
-  box-shadow:0 10px 30px rgba(201,169,106,.28);position:relative;overflow:hidden;transition:.25s;
-}
-.g-cta button:active{transform:scale(.96)}
-/* 章节进度轨 */
-#j-rail{position:absolute;right:10px;top:50%;transform:translateY(-50%);z-index:25;display:flex;flex-direction:column;align-items:center;gap:14px;opacity:0;transition:.6s}
-#j-rail.show{opacity:1}
-#j-rail i{width:5px;height:5px;border-radius:50%;background:var(--text3);transition:.3s;border:none}
-#j-rail i.on{background:var(--gold-soft);box-shadow:0 0 0 3px rgba(201,169,106,.18);transform:scale(1.25)}
-/* ============================================================
-   第二章 · 山河纹志（四向地图）
-   ============================================================ */
-#ch-map{overflow:hidden}
-.m-head{padding:16px 20px 10px;position:relative;z-index:5;display:flex;align-items:center;gap:12px}
-.m-head .ch-no{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:4px 12px;flex:none}
-.m-head h2{font-family:var(--serif);font-size:19px;letter-spacing:.22em;color:var(--paper);font-weight:700}
-.m-head .m-en{margin-left:auto;font-family:var(--serif);font-size:9px;letter-spacing:.3em;color:var(--text3)}
-.m-hint{padding:0 20px 12px;font-size:11px;color:var(--text3);letter-spacing:.14em;display:flex;align-items:center;gap:8px;position:relative;z-index:5}
-.m-hint svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:1.6;flex:none}
-#map-view{position:absolute;left:0;right:0;top:88px;bottom:0;overflow:hidden;touch-action:none;cursor:grab;
-  background:radial-gradient(640px 340px at 50% 8%, #3F2813 0%, transparent 70%), #241106}
-#map-view:active{cursor:grabbing}
-#map-world{position:absolute;left:0;top:0;width:2400px;height:2000px;transform-origin:0 0;will-change:transform}
-.mw-ground{position:absolute;inset:0;background:
-  radial-gradient(900px 500px at 30% 20%, rgba(201,169,106,.08), transparent 60%),
-  radial-gradient(700px 420px at 78% 60%, rgba(30,58,95,.5), transparent 65%),
-  linear-gradient(180deg,#3B2212 0%,#2E1A0D 45%,#241106 100%)}
-.mw-ground::after{content:"";position:absolute;inset:0;opacity:.55;
-  background:repeating-linear-gradient(0deg,rgba(201,169,106,.045) 0 1px,transparent 1px 9px),
-             repeating-linear-gradient(90deg,rgba(201,169,106,.03) 0 1px,transparent 1px 9px)}
-.mw-svg{position:absolute;inset:0;width:100%;height:100%}
-.mw-cloud{position:absolute;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,rgba(230,206,151,.16),transparent 70%);filter:blur(6px);pointer-events:none}
-.mw-dot{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--gold-soft);box-shadow:0 0 10px var(--gold);opacity:.7;pointer-events:none;animation:mwTw 3.2s ease-in-out infinite}
-@keyframes mwTw{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:.9;transform:scale(1.25)}}
-/* 节点 */
-.mnode{position:absolute;width:86px;margin-left:-43px;margin-top:-52px;cursor:pointer;text-align:center;z-index:6;touch-action:none}
-.mnode .md-ring{position:relative;width:74px;height:74px;margin:0 auto;border-radius:50%;
-  background:radial-gradient(circle at 32% 26%, #4C2E15, #2B160B 70%);
-  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.mnode .md-ring::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px dashed rgba(201,169,106,.4);animation:mwSpin 22s linear infinite}
-@keyframes mwSpin{to{transform:rotate(360deg)}}
-.mnode .md-ring::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 18px rgba(25,10,4,.65)}
-.mnode img{width:100%;height:100%;object-fit:cover}
-.mnode .md-sym{width:60%;height:60%}
-.mnode .md-sym svg{width:100%;height:100%}
-.mnode .md-name{display:inline-block;margin-top:9px;font-family:var(--serif);font-size:12px;letter-spacing:.3em;color:var(--paper);
-  background:rgba(35,17,8,.72);border:1px solid var(--line);padding:3px 11px;border-radius:99px;white-space:nowrap;
-  text-shadow:0 1px 6px rgba(0,0,0,.6)}
-.mnode .md-pulse{position:absolute;left:50%;top:37px;width:74px;height:74px;margin-left:-37px;margin-top:-37px;border-radius:50%;
-  border:1px solid rgba(201,169,106,.55);opacity:0;pointer-events:none}
-.mnode.hot .md-pulse{animation:mdPulse 1.8s ease-out infinite}
-@keyframes mdPulse{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.7);opacity:0}}
-.mnode .md-ring{transition:transform .25s, box-shadow .25s}
-.mnode:active .md-ring{transform:scale(.94)}
-.mnode.found .md-ring{box-shadow:0 0 0 3px rgba(201,169,106,.25), 0 0 24px rgba(201,169,106,.35)}
-/* 地图视口UI */
-#m-compass{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:12;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.8;pointer-events:none}
-#m-compass svg{width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.4}
-#m-compass span{font-size:9px;letter-spacing:.34em;color:var(--text3)}
-#m-minimap{position:absolute;right:12px;top:8px;z-index:12;width:96px;height:70px;border-radius:10px;overflow:hidden;
-  border:1px solid var(--line);background:rgba(35,17,8,.72);backdrop-filter:blur(3px)}
-#m-minimap canvas{width:100%;height:100%;display:block}
-#m-loc{position:absolute;left:12px;bottom:12px;z-index:12;display:flex;align-items:center;gap:8px;
-  font-size:10px;letter-spacing:.2em;color:var(--gold-soft);background:rgba(35,17,8,.78);
-  border:1px solid var(--line);padding:7px 13px;border-radius:99px;max-width:74%}
-#m-loc i{width:6px;height:6px;border-radius:50%;background:var(--gold-soft);box-shadow:0 0 8px var(--gold);flex:none;animation:locBlink 1.6s ease-in-out infinite}
-@keyframes locBlink{0%,100%{opacity:.4}50%{opacity:1}}
-#m-firsthint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:13;text-align:center;
-  font-family:var(--serif);font-size:13px;letter-spacing:.4em;color:var(--paper);line-height:2.4;
-  background:radial-gradient(200px 120px at 50% 50%,rgba(35,17,8,.94),rgba(35,17,8,.75));
-  border:1px solid var(--line);border-radius:18px;padding:22px 26px;pointer-events:none;transition:opacity .8s,transform .8s}
-#m-firsthint.hide{opacity:0;transform:translate(-50%,-50%) scale(.94)}
-#m-firsthint small{display:block;font-size:10px;letter-spacing:.26em;color:var(--text3);margin-top:8px;font-family:var(--sans)}
-/* ============================================================
-   第三章 · 纹样工坊（DIY — 核心）
-   ============================================================ */
-#ch-studio{padding-bottom:120px}
-.s-head{position:sticky;top:0;z-index:20;padding:16px 20px 12px;
-  background:linear-gradient(180deg,rgba(43,22,11,.97) 58%,rgba(43,22,11,0));display:flex;align-items:center;gap:12px}
-.s-head .ch-no{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:4px 12px;flex:none}
-.s-head h2{font-family:var(--serif);font-size:19px;letter-spacing:.22em;color:var(--paper);font-weight:700}
-.s-steps{margin-left:auto;display:flex;gap:4px}
-.s-steps i{width:7px;height:7px;border-radius:50%;background:var(--text3);opacity:.45;transition:.3s}
-.s-steps i.on{background:var(--gold-soft);opacity:1;box-shadow:0 0 0 3px rgba(201,169,106,.16)}
-/* 画布 */
-.s-canvas-wrap{padding:6px 20px 0}
-#studio-canvas{position:relative;width:100%;aspect-ratio:4/5;max-height:60vh;margin:0 auto;border-radius:16px;
-  border:1px solid var(--line);overflow:hidden;touch-action:none;cursor:default;
-  background:var(--ground,#5E2A15);
-  box-shadow:inset 0 0 60px rgba(0,0,0,.35), var(--shadow)}
-#studio-canvas::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.5;
-  background:repeating-linear-gradient(0deg,rgba(230,206,151,.05) 0 1px,transparent 1px 10px),
-             repeating-linear-gradient(90deg,rgba(230,206,151,.04) 0 1px,transparent 1px 10px)}
-#studio-canvas::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
-  background:radial-gradient(130% 90% at 50% 50%, transparent 55%, rgba(25,10,4,.4) 100%)}
-.s-tile{position:absolute;inset:0;z-index:1;pointer-events:none;background-size:cover;background-position:center;opacity:.92}
-.s-empty{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-  pointer-events:none;text-align:center;color:var(--text3)}
-.s-empty svg{width:40px;height:40px;stroke:var(--gold);fill:none;stroke-width:1.2;opacity:.65}
-.s-empty p{font-family:var(--serif);font-size:12.5px;letter-spacing:.3em;line-height:2}
-.s-empty span{font-size:10px;letter-spacing:.18em;color:var(--text3);opacity:.8}
-.s-empty.hide{display:none}
-/* 画布元素 */
-.sel{position:absolute;z-index:4;width:150px;height:150px;margin:-75px 0 0 -75px;touch-action:none;cursor:move}
-.sel svg{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
-.sel.dim{filter:brightness(.6)}
-.sel .sel-bb{position:absolute;inset:-13px;border:1px dashed rgba(201,169,106,.75);border-radius:12px;display:none;pointer-events:none}
-.sel.on .sel-bb{display:block}
-.sel .sel-knob{position:absolute;width:11px;height:11px;border-radius:50%;background:var(--gold-soft);
-  border:1.5px solid #5E2A15;display:none;pointer-events:none;box-shadow:0 0 6px rgba(201,169,106,.6)}
-.sel.on .sel-knob{display:block}
-.sel .sel-knob.k-tl{left:-18px;top:-18px}.sel .sel-knob.k-tr{right:-18px;top:-18px}
-.sel .sel-knob.k-bl{left:-18px;bottom:-18px}.sel .sel-knob.k-br{right:-18px;bottom:-18px}
-.sel.adding{animation:selPop .5s cubic-bezier(.18,.9,.3,1.25) both}
-@keyframes selPop{from{transform:scale(.2) rotate(-14deg);opacity:0}to{transform:scale(1) rotate(var(--rot,0deg));opacity:1}}
-/* 选中工具栏 */
-.s-toolbar{margin:12px 20px 0;border-radius:14px;background:linear-gradient(160deg,#4C2B14,#3B2212);
-  border:1px solid var(--line);padding:12px 12px 14px;position:relative;transition:opacity .3s,transform .3s}
-.s-toolbar.t-off{opacity:.35;transform:scale(.985)}
-.s-toolbar .tb-title{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-family:var(--serif);font-size:12px;letter-spacing:.2em;color:var(--gold-soft)}
-.s-toolbar .tb-title em{font-style:normal;font-size:10px;color:var(--text3);letter-spacing:.12em;margin-left:4px;font-family:var(--sans)}
-.tb-colors{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.tb-colors button{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.16);cursor:pointer;position:relative;padding:0}
-.tb-colors button.on{border-color:var(--gold-soft);box-shadow:0 0 0 2px rgba(201,169,106,.28);transform:translateY(-2px)}
-.tb-colors button span{position:absolute;left:50%;top:-22px;transform:translateX(-50%);font-size:9px;letter-spacing:.1em;
-  color:var(--paper);background:rgba(35,17,8,.9);padding:2px 8px;border-radius:6px;white-space:nowrap;opacity:0;transition:.2s;pointer-events:none}
-.tb-colors button:active span,.tb-colors button.on span{opacity:1}
-.tb-acts{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.tb-acts button{display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid var(--line-soft);
-  background:rgba(201,169,106,.05);color:var(--text2);border-radius:10px;padding:8px 4px;cursor:pointer;font-size:9.5px;letter-spacing:.08em;transition:.2s;font-family:var(--sans)}
-.tb-acts button svg{width:17px;height:17px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.tb-acts button:active{background:rgba(201,169,106,.16);transform:scale(.94)}
-.tb-acts button.danger{color:#E08A72}
-.tb-acts button.danger svg{stroke:#E08A72}
-/* 素材库 */
-.s-sub{display:flex;align-items:center;gap:10px;padding:20px 20px 10px}
-.s-sub .ss-t{font-family:var(--serif);font-size:13.5px;letter-spacing:.24em;color:var(--paper)}
-.s-sub .ss-en{font-size:9px;letter-spacing:.3em;color:var(--text3);text-transform:uppercase}
-.s-sub::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
-.librow{display:flex;gap:10px;overflow-x:auto;padding:4px 20px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.librow::-webkit-scrollbar{display:none}
-.lib{flex:none;width:66px;text-align:center;cursor:pointer;transition:.22s;touch-action:manipulation}
-.lib .lb-ico{width:64px;height:64px;border-radius:13px;border:1px solid var(--line-soft);background:linear-gradient(160deg,#4C2B14,#3B2212);
-  display:flex;align-items:center;justify-content:center;padding:7px;transition:.22s}
-.lib .lb-ico svg{width:100%;height:100%}
-.lib span{display:block;font-size:10px;color:var(--text2);margin-top:6px;letter-spacing:.12em}
-.lib:active .lb-ico{transform:scale(.9);border-color:var(--gold)}
-.lib:active span{color:var(--gold-soft)}
-/* 织法 & 底布 */
-.s-optrow{display:flex;gap:10px;padding:2px 20px 6px;overflow-x:auto;scrollbar-width:none}
-.s-optrow::-webkit-scrollbar{display:none}
-.s-optrow .s-opt{flex:none;padding:8px 16px;border-radius:99px;border:1px solid var(--line-soft);background:rgba(201,169,106,.05);
-  color:var(--text2);font-size:11px;letter-spacing:.16em;cursor:pointer;transition:.22s;font-family:var(--sans)}
-.s-optrow .s-opt.on{background:linear-gradient(145deg,#E8CF9A,#B08E4E);color:#5E2A15;border-color:transparent;font-weight:700}
-.groundrow{display:flex;gap:10px;padding:2px 20px 6px;overflow-x:auto;scrollbar-width:none}
-.groundrow::-webkit-scrollbar{display:none}
-.ground{flex:none;display:flex;align-items:center;gap:8px;padding:7px 14px 7px 9px;border-radius:99px;border:1px solid var(--line-soft);
-  background:rgba(201,169,106,.05);cursor:pointer;transition:.22s}
-.ground i{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.22);flex:none}
-.ground span{font-size:10.5px;color:var(--text2);letter-spacing:.14em}
-.ground.on{border-color:var(--gold);background:rgba(201,169,106,.14)}
-.ground.on span{color:var(--gold-soft)}
-/* 操作行 */
-.s-acts{display:flex;gap:10px;padding:12px 20px 6px}
-.s-acts button{flex:1;border-radius:12px;border:1px solid var(--line-soft);background:rgba(201,169,106,.05);color:var(--text2);
-  font-size:11.5px;letter-spacing:.2em;padding:12px 0;cursor:pointer;transition:.2s;font-family:var(--sans)}
-.s-acts button:active{transform:scale(.96);background:rgba(201,169,106,.14)}
-.s-acts button.primary{background:linear-gradient(145deg,#E8CF9A,#B08E4E);color:#5E2A15;border-color:transparent;font-weight:700;box-shadow:0 6px 20px rgba(201,169,106,.26)}
-.s-acts button.primary:active{transform:scale(.96)}
-/* 首次提示 */
-#s-onboard{position:absolute;inset:0;z-index:95;background:rgba(8,13,28,.82);backdrop-filter:blur(4px);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:30px}
-#s-onboard.hide{opacity:0;visibility:hidden;transition:.4s}
-#s-onboard .ob-title{font-family:var(--serif);font-size:20px;letter-spacing:.3em;color:var(--paper)}
-#s-onboard .ob-tips{display:flex;flex-direction:column;gap:16px}
-#s-onboard .ob-tips div{display:flex;align-items:center;gap:12px;text-align:left}
-#s-onboard .ob-tips svg{width:36px;height:36px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none;opacity:.95}
-#s-onboard .ob-tips b{display:block;font-size:12.5px;color:var(--paper);letter-spacing:.14em;font-family:var(--serif)}
-#s-onboard .ob-tips span{display:block;font-size:10.5px;color:var(--text2);margin-top:3px;letter-spacing:.06em;line-height:1.7}
-#s-onboard button{margin-top:6px;font-family:var(--serif);font-size:13px;letter-spacing:.3em;color:#5E2A15;font-weight:700;
-  background:linear-gradient(145deg,#E8CF9A,#B08E4E);border:none;border-radius:99px;padding:14px 36px;cursor:pointer;min-height:48px}
-/* ============================================================
-   第四章 · 锦成
-   ============================================================ */
-.f-hero{min-height:52vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px 24px 20px;text-align:center;position:relative;overflow:hidden}
-.f-hero .f-seal{width:74px;height:74px;border-radius:14px;background:linear-gradient(145deg,#C0563F,#8E3B2A);
-  display:flex;align-items:center;justify-content:center;color:#F3D9CE;font-family:var(--serif);font-size:30px;font-weight:900;letter-spacing:.08em;
-  box-shadow:0 10px 26px rgba(142,59,42,.4), inset 0 0 0 1px rgba(243,217,206,.35);transform:rotate(-7deg);animation:sealIn .7s cubic-bezier(.2,.8,.3,1.4) both}
-@keyframes sealIn{from{transform:rotate(-20deg) scale(1.6);opacity:0}to{transform:rotate(-7deg) scale(1);opacity:1}}
-.f-hero h2{font-family:var(--serif);font-size:26px;letter-spacing:.3em;color:var(--paper);font-weight:700}
-.f-hero p{font-size:12px;color:var(--text2);line-height:2.1;letter-spacing:.12em}
-.f-hero p b{color:var(--gold-soft);font-weight:600}
-.f-count{display:flex;gap:8px;justify-content:center;margin-top:4px}
-.f-count span{font-size:10px;letter-spacing:.24em;color:var(--gold);border:1px solid var(--line);border-radius:99px;padding:4px 13px}
-.f-gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:6px 20px 20px}
-.f-card{border:1px solid var(--line-soft);border-radius:16px;overflow:hidden;background:linear-gradient(160deg,#3D2412,#2E1A0D);cursor:pointer;transition:.22s}
-.f-card:active{transform:scale(.97);border-color:var(--gold)}
-.f-card .fc-img{position:relative;aspect-ratio:4/5;overflow:hidden}
-.f-card .fc-img img{width:100%;height:100%;object-fit:cover}
-.f-card .fc-no{position:absolute;left:8px;top:8px;font-size:8.5px;letter-spacing:.14em;color:var(--paper);
-  background:rgba(35,17,8,.78);border:1px solid var(--line);padding:3px 8px;border-radius:99px}
-.f-card .fc-tag{position:absolute;right:8px;bottom:8px;font-size:8.5px;letter-spacing:.12em;color:var(--gold-soft);
-  border:1px solid rgba(201,169,106,.35);border-radius:99px;padding:2px 8px;background:rgba(35,17,8,.55)}
-.f-card .fc-del{position:absolute;right:8px;top:8px;width:24px;height:24px;border-radius:50%;border:1px solid rgba(201,169,106,.45);
-  background:rgba(35,17,8,.62);color:var(--gold-soft);font-size:13px;line-height:1;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:.22s;z-index:3;padding:0}
-.f-card .fc-del:active{transform:scale(.88);background:rgba(126,31,24,.75);border-color:#C0563F}
-  background:rgba(35,17,8,.78);border:1px solid var(--line);padding:3px 8px;border-radius:99px}
-.f-card .fc-bd{padding:10px 12px 12px}
-.f-card .fc-bd b{font-family:var(--serif);font-size:12.5px;color:var(--paper);letter-spacing:.1em;display:block}
-.f-card .fc-bd span{display:block;font-size:9.5px;color:var(--text3);margin-top:4px;letter-spacing:.1em}
-.f-acts{display:flex;gap:10px;padding:6px 20px 16px}
-.f-acts button{flex:1;border-radius:12px;border:1px solid var(--line-soft);background:rgba(201,169,106,.05);color:var(--text2);
-  font-size:11.5px;letter-spacing:.2em;padding:12px 0;cursor:pointer;transition:.2s;font-family:var(--sans)}
-.f-acts button:active{transform:scale(.96)}
-.f-acts button.primary{background:linear-gradient(145deg,#E8CF9A,#B08E4E);color:#5E2A15;border-color:transparent;font-weight:700}
-.f-foot{padding:26px 24px 130px;text-align:center}
-.f-foot p{font-family:var(--serif);font-size:10px;letter-spacing:.3em;color:var(--text3);line-height:2.4}
-/* ============================================================
-   模态
-   ============================================================ */
-#modal{position:absolute;inset:0;z-index:160;display:none}
-#modal.show{display:block}
-.md-mask{position:absolute;inset:0;background:rgba(6,10,22,.72);backdrop-filter:blur(5px);opacity:0;transition:.3s}
-#modal.show .md-mask{opacity:1}
-.md-panel{position:absolute;left:50%;top:50%;transform:translate(-50%,-48%);width:calc(100% - 36px);max-width:420px;max-height:86%;
-  overflow-y:auto;scrollbar-width:none;border-radius:20px;border:1px solid var(--line);
-  background:linear-gradient(165deg,#4C2B14 0%,#3B2212 78%);box-shadow:0 26px 70px rgba(0,0,0,.6);
-  opacity:0;transform:translate(-50%,-46%);transition:.34s cubic-bezier(.2,.8,.3,1);padding-bottom:18px}
-.md-panel::-webkit-scrollbar{display:none}
-#modal.show .md-panel{opacity:1;transform:translate(-50%,-50%)}
-.md-close{position:sticky;top:10px;float:right;z-index:5;margin:10px 10px 0 0;width:32px;height:32px;border-radius:50%;
-  border:1px solid var(--line);background:rgba(35,17,8,.82);color:var(--gold-soft);font-size:15px;cursor:pointer;line-height:1}
-.md-hero{position:relative;height:190px;margin:0 0 16px;overflow:hidden}
-.md-hero img{width:100%;height:100%;object-fit:cover;filter:brightness(.88)}
-.md-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(43,22,11,0) 55%,#3D2412 100%)}
-.md-hero .mh-pill{position:absolute;left:14px;top:14px;font-size:9px;letter-spacing:.22em;color:var(--gold-soft);
-  background:rgba(35,17,8,.8);border:1px solid var(--line);padding:4px 12px;border-radius:99px}
-.md-body{padding:0 18px}
-.md-body .md-title{font-family:var(--serif);font-size:21px;letter-spacing:.14em;color:var(--paper);font-weight:700}
-.md-body .md-meaning{font-family:var(--serif);font-size:13px;letter-spacing:.24em;color:var(--gold-soft);margin-top:9px;padding-left:12px;position:relative}
-.md-body .md-meaning::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:2px;background:var(--gold)}
-.md-body .md-story{font-size:13px;color:var(--text2);line-height:2.1;margin-top:14px;letter-spacing:.02em}
-.md-body .md-colors{display:flex;gap:8px;margin-top:16px;align-items:center}
-.md-body .md-colors i{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.18)}
-.md-body .md-colors span{font-size:10px;color:var(--text3);letter-spacing:.14em;margin-left:4px}
-.md-cta{display:flex;gap:10px;padding:16px 18px 0}
-.md-cta button{flex:1;border-radius:12px;border:1px solid var(--line-soft);background:rgba(201,169,106,.05);color:var(--text2);
-  font-size:12px;letter-spacing:.18em;padding:13px 0;cursor:pointer;transition:.2s;font-family:var(--sans)}
-.md-cta button:active{transform:scale(.96)}
-.md-cta button.primary{background:linear-gradient(145deg,#E8CF9A,#B08E4E);color:#5E2A15;border-color:transparent;font-weight:700}
-/* 命名模态 */
-.md-name{text-align:center;padding:26px 20px 6px}
-.md-name h3{font-family:var(--serif);font-size:18px;letter-spacing:.28em;color:var(--paper)}
-.md-name p{font-size:11px;color:var(--text3);margin-top:10px;letter-spacing:.12em;line-height:1.9}
-.md-name .mn-prev{width:150px;height:188px;margin:16px auto 0;border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
-.md-name .mn-prev img{width:100%;height:100%;object-fit:cover}
-.md-name input{width:100%;margin-top:18px;padding:12px 14px;border-radius:11px;border:1px solid var(--line);
-  background:rgba(35,17,8,.6);color:var(--paper);font-size:16px;letter-spacing:.08em;outline:none;font-family:var(--serif)}
-.md-name input:focus{border-color:var(--gold)}
-/* 作品预览模态 */
-.fw-hero{position:relative;width:100%;aspect-ratio:4/5;max-height:46vh;overflow:hidden;border-radius:16px;border:1px solid var(--line)}
-.fw-hero img{width:100%;height:100%;object-fit:cover}
-.fw-info{padding:14px 18px 0;text-align:center}
-.fw-info b{font-family:var(--serif);font-size:16px;letter-spacing:.14em;color:var(--paper)}
-.fw-info p{font-size:10.5px;color:var(--text3);margin-top:8px;letter-spacing:.12em;line-height:1.9}
-/* ============================================================
-   Toast & 通用
-   ============================================================ */
-#toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(14px);
-  background:rgba(35,17,8,.94);border:1px solid var(--line);color:var(--paper);font-size:12px;letter-spacing:.1em;
-  padding:10px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:.3s;z-index:180;max-width:82%;text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,.4)}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
-}
-</style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta property="og:type" content="webpage" />
+    <meta property="og:title" content="锦织时序｜一梭织江南" />
+    <meta property="og:image" content="https://e.u.h5mc.com/c/0k_3/60lh/undefined" />
+    <meta property="og:image1" content="" />
+    <meta property="og:image2" content="" />
+    <meta property="og:url" content="https://e.u.h5mc.com/c/0k_3/60lh/index.html" />
+    <meta property="og:description" content="" />
+    <meta itemprop="name" content="锦织时序｜一梭织江南"/>
+    <meta itemprop="image" content="https://e.u.h5mc.com/c/0k_3/60lh/undefined" />
+    <meta name="description" itemprop="description" content="" />
+    <!-- watermark 参数测试 -->
+    <meta property="use_watermark" content="0" />
+    <meta property="watermark" content="" />
+    <title>锦织时序｜一梭织江南</title>
 </head>
-<body>
-<div id="app">
-
-  <!-- ===== 载入序章：开场介绍 · 织出品牌 ===== -->
-  <div id="loader">
-    <div class="ld-bg"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SFunbwMu5oKagCx5a2dcFp2Knfh" alt="绣娘织绣"></div>
-    <div class="ld-veil"></div>
-    <div class="ld-grain"></div>
-    <div class="ld-kicker" id="ld-kicker">非遗织绣 · 沉浸长卷</div>
-    <div class="ld-mark"><div class="ld-weave" id="ld-weave">
-      <svg viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="50"/>
-        <circle cx="60" cy="60" r="38" stroke-dasharray="3 5"/>
-        <ellipse cx="60" cy="44" rx="7" ry="14"/>
-        <ellipse cx="60" cy="76" rx="7" ry="14"/>
-        <ellipse cx="44" cy="60" rx="14" ry="7"/>
-        <ellipse cx="76" cy="60" rx="14" ry="7"/>
-        <circle cx="60" cy="60" r="5"/>
-      </svg>
-    </div></div>
-    <div class="ld-title" id="ld-title"><span>锦</span><span>织</span><span>时</span><span>序</span></div>
-    <div class="ld-en" id="ld-en">BROCADE · CHRONICLE</div>
-    <div class="ld-desc" id="ld-desc">江南丝雨，机杼千年。从蚕丝到锦缎、从纹样到故事——以数字之纬，织一卷锦绣山河。</div>
-    <div class="ld-prog">
-      <div class="lp-lab" id="lp-lab">穿针引线 · 唤醒千年织机</div>
-      <div class="lp-bar"><i id="lp-fill"></i></div>
-      <div class="lp-num" id="lp-num">0%</div>
-    </div>
-    <div class="ld-enter" id="ld-enter">
-      <button id="ld-btn">轻触入梦</button>
-      <span class="ld-hint">经纬织梦 · 锦绣山河</span>
-    </div>
-  </div>
-
-  <!-- ===== 主舞台 ===== -->
-  <div id="stage">
-
-    <!-- ===== 第一章 · 织造之法（翻页图册） ===== -->
-    <section class="ch on" id="ch-journey">
-      <div class="g-head">
-        <span class="ch-no">第一章</span>
-        <h2>织造之法</h2>
-        <span class="g-page" id="g-page">1 / 6</span>
-      </div>
-      <div class="g-view">
-        <div class="g-track" id="g-track">
-          <div class="g-page-c">
-            <div class="g-img"><span class="g-no">一</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/HBaEbcOBgogw9sxVWl5clEDznFe" alt="春蚕吐丝"><span class="g-tag">蚕事 · 始兴</span></div>
-            <div class="g-body">
-              <h3>春蚕吐丝，江南始动</h3>
-              <span class="g-en">SILKWORM · THE FIRST THREAD</span>
-              <p>三月的江南，桑叶一夜抽芽。蚕室里灯影如豆，亿万条银丝被一双双手自茧中抽离。一匹锦的第一行诗，就从这一缕丝开始。</p>
-              <div class="g-quote">「蚕为天下虫，丝为布中魂」</div>
-            </div>
-          </div>
-          <div class="g-page-c">
-            <div class="g-img"><span class="g-no">二</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/US92boPivoVcYoxtledceQ2nn8d" alt="缫丝成经"><span class="g-tag">缫丝 · 成经</span></div>
-            <div class="g-body">
-              <h3>丝缕既成，经纬分明</h3>
-              <span class="g-en">REELING · WARP AND WEFT</span>
-              <p>生丝经染色、络线、整经，在织机上排成横平竖直的坐标。横为纬、竖为经——一匹锦的骨血，自此分明。</p>
-              <div class="g-quote">「经为正，纬为从，一纵一横，天下之理」</div>
-            </div>
-          </div>
-          <div class="g-page-c">
-            <div class="g-img"><span class="g-no">三</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/AzYDbcvqsovkizxGCI0cKgFhnT7" alt="机杼织造"><span class="g-tag">机杼 · 织造</span></div>
-            <div class="g-body">
-              <h3>机杼声声，寸锦寸金</h3>
-              <span class="g-en">LOOM · INCH BY INCH</span>
-              <p>大花楼上，拽花工与织手一上一下。一天只织五厘米——时间在经纬里被一寸寸织慢，方有寸锦寸金之说。</p>
-              <div class="g-quote">「两人一机，日成五寸；一丝不苟，方成云锦」</div>
-            </div>
-          </div>
-          <div class="g-page-c">
-            <div class="g-img"><span class="g-no">四</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/XxIvbXVd3oZpVXx5fH6cN9wxngg" alt="妆花云锦牡丹"><span class="g-tag">妆花 · 云锦</span></div>
-            <div class="g-body">
-              <h3>万缕金线，织就云霞</h3>
-              <span class="g-en">ZHUANGHUA · BROCADE OF CLOUDS</span>
-              <p>妆花是云锦之巅：纬线分段换色、梭梭不同，织出「逐花异色」之奇。一件袍料，金线万缕，寸锦寸金。</p>
-              <div class="g-quote">「妆花之美，在于一梭一色，两花相异」</div>
-            </div>
-          </div>
-          <div class="g-page-c">
-            <div class="g-img"><span class="g-no">五</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" alt="缂丝凤穿牡丹"><span class="g-tag">缂丝 · 通经断纬</span></div>
-            <div class="g-body">
-              <h3>通经断纬，如雕如镂</h3>
-              <span class="g-en">KESI · CARVED SILK</span>
-              <p>缂丝以「通经断纬」织出图案：纬线只随纹样回梭，如刻如镂，正反如一。织造极费工费时，故有一寸缂丝一寸金之说。</p>
-              <div class="g-quote">「通经断纬，如雕如镂；一丝不苟，方成奇技」</div>
-            </div>
-          </div>
-          <div class="g-page-c">
-            <div class="g-img"><span class="g-no">六</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SFunbwMu5oKagCx5a2dcFp2Knfh" alt="绣娘刺绣"><span class="g-tag">刺绣 · 纹意</span></div>
-            <div class="g-body">
-              <h3>一针一线，皆有所寄</h3>
-              <span class="g-en">EMBROIDERY · BLESSINGS IN STITCHES</span>
-              <p>缠枝取生生不息，蝠鹿鱼寄福禄有余。纹样从来不是装饰——那是一家人把祈愿织进布里的暗语，一针一线，都是日子。</p>
-              <div class="g-quote">「纹先要读懂，配色才有根」——老绣娘</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="g-nav">
-        <button id="g-prev" aria-label="上一页"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <div class="g-dots" id="g-dots"></div>
-        <button id="g-next" aria-label="下一页"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-      </div>
-      <div class="g-cta" id="g-cta"><button id="j-to-map">循经纬而下 · 探山河纹志</button></div>
-    </section>
-    <!-- ===== 第二章 · 山河纹志（四向地图） ===== -->
-    <section class="ch" id="ch-map">
-      <div class="m-head">
-        <span class="ch-no">第二章</span>
-        <h2>山河纹志</h2>
-        <span class="m-en">FLOWER OF PATTERNS</span>
-      </div>
-      <div class="m-hint"><svg viewBox="0 0 24 24"><path d="M8 5l-5 7 5 7"/><path d="M16 5l5 7-5 7"/><path d="M12 3v18"/></svg>指尖四向滑动 · 漫游织锦山河，轻触光点读纹样故事</div>
-      <div id="map-view">
-        <div id="map-world">
-          <div class="mw-ground"></div>
-          <svg class="mw-svg" viewBox="0 0 2400 2000" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="petalG" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#8C3B1E"/><stop offset="1" stop-color="#4A2E16"/>
-              </linearGradient>
-              <linearGradient id="petalG2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#6B2E15"/><stop offset="1" stop-color="#3D2412"/>
-              </linearGradient>
-              <radialGradient id="coreG" cx=".5" cy=".5" r=".5">
-                <stop offset="0" stop-color="#D8BC7E"/><stop offset=".65" stop-color="#B08E4E"/><stop offset="1" stop-color="#6B4621"/>
-              </radialGradient>
-            </defs>
-            <!-- 远山（锦缎山河的底韵） -->
-            <path d="M-40 2000 L120 1760 L260 1900 L420 1700 L620 1880 L780 1740 L940 2000 Z" fill="#4A2E16" opacity=".3"/>
-            <path d="M1560 2000 L1760 1720 L1940 1860 L2140 1680 L2320 1840 L2440 1720 L2460 2000 Z" fill="#4A2E16" opacity=".3"/>
-            <!-- 水波纹 -->
-            <g stroke="#6B2E15" stroke-width="2" stroke-linecap="round" opacity=".28">
-              <path d="M160 1540 q20 -10 40 0 t40 0 t40 0"/>
-              <path d="M280 1600 q20 -10 40 0 t40 0"/>
-              <path d="M2060 1700 q20 -10 40 0 t40 0 t40 0"/>
-              <path d="M2180 1760 q20 -10 40 0 t40 0"/>
-            </g>
-            <!-- ===== 宝相花 · 八瓣纹山 ===== -->
-            <g class="mw-flower">
-              <!-- 外圈联珠环：团花闭合，纹山相抱 -->
-              <circle cx="1200" cy="1000" r="864" stroke="#C9A96A" stroke-width="1.3" stroke-dasharray="2 12" opacity=".5" fill="none"/>
-              <g opacity=".85">
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(0 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(15 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(30 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(45 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(60 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(75 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(90 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(105 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(120 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(135 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(150 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(165 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(180 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(195 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(210 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(225 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(240 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(255 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(270 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(285 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(300 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(315 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(330 1200 1000)"/>
-                <circle cx="1200" cy="136" r="7" fill="#C9A96A" transform="rotate(345 1200 1000)"/>
-              </g>
-              <!-- 丝路经纬：从丝路之心向外放射 -->
-              <g stroke="#C9A96A" stroke-width="1.4" stroke-dasharray="1 14" opacity=".32">
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(-90 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(-45 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(0 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(45 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(90 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(135 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(180 1200 1000)"/>
-                <line x1="1200" y1="1000" x2="1200" y2="580" transform="rotate(225 1200 1000)"/>
-              </g>
-              <!-- 八瓣纹山：一瓣一纹，绕丝路之心次第绽放 -->
-              <g>
-                <g transform="rotate(-90 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(-45 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(0 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(45 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(90 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(135 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(180 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-                <g transform="rotate(225 1200 1000)">
-                  <ellipse cx="1200" cy="280" rx="150" ry="300" fill="url(#petalG)" stroke="#C9A96A" stroke-width="2" opacity=".92"/>
-                  <ellipse cx="1200" cy="300" rx="98" ry="190" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1.2"/>
-                  <ellipse cx="1200" cy="330" rx="42" ry="100" fill="none" stroke="#E6CE97" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
-                </g>
-              </g>
-              <!-- 中心团花 · 丝路之心 -->
-              <g>
-                <circle cx="1200" cy="1000" r="230" fill="#4A2E16" stroke="#C9A96A" stroke-width="2"/>
-                <circle cx="1200" cy="1000" r="178" fill="none" stroke="#B08E4E" stroke-width="1.2" stroke-dasharray="4 8" opacity=".8"/>
-                <g>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(0 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(45 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(90 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(135 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(180 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(225 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(270 1200 1000)" opacity=".9"/>
-                  <ellipse cx="1200" cy="868" rx="40" ry="132" fill="url(#petalG2)" stroke="#B08E4E" stroke-width="1" transform="rotate(315 1200 1000)" opacity=".9"/>
-                </g>
-                <circle cx="1200" cy="1000" r="64" fill="url(#coreG)" stroke="#E6CE97" stroke-width="1.4"/>
-                <text x="1200" y="1016" text-anchor="middle" font-family="Georgia, 'Noto Serif SC', serif" font-size="44" font-weight="700" fill="#3D2412">织</text>
-              </g>
-            </g>
-          </svg>
-          <div class="mw-cloud" style="left:120px;top:230px;width:240px;height:70px;animation:mwCloud 16s ease-in-out infinite"></div>
-          <div class="mw-cloud" style="left:2140px;top:200px;width:200px;height:56px;animation:mwCloud 20s 3s ease-in-out infinite"></div>
-          <div class="mw-cloud" style="left:120px;top:1720px;width:260px;height:64px;animation:mwCloud 18s 6s ease-in-out infinite"></div>
-          <div class="mw-cloud" style="left:2140px;top:1700px;width:220px;height:60px;animation:mwCloud 22s 2s ease-in-out infinite"></div>
-          <style>
-            @keyframes mwCloud{0%,100%{transform:translateX(0)}50%{transform:translateX(46px)}}
-          </style>
-          <div class="mw-dot" style="left:1200px;top:40px"></div>
-          <div class="mw-dot" style="left:2170px;top:520px;animation-delay:.8s"></div>
-          <div class="mw-dot" style="left:2390px;top:1000px;animation-delay:1.4s"></div>
-          <div class="mw-dot" style="left:2170px;top:1480px;animation-delay:.4s"></div>
-          <div class="mw-dot" style="left:1200px;top:1960px;animation-delay:2s"></div>
-          <div class="mw-dot" style="left:230px;top:1480px;animation-delay:2.6s"></div>
-          <div class="mw-dot" style="left:10px;top:1000px;animation-delay:1s"></div>
-          <div class="mw-dot" style="left:230px;top:520px;animation-delay:1.8s"></div>
-
-          <!-- 节点（八瓣 · 八角阵列，r=720） -->
-          <div class="mnode" data-node="0" style="left:1200px;top:280px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc" alt="缠枝莲纹"></div>
-            <span class="md-name">缠枝洲</span>
-          </div>
-          <div class="mnode" data-node="1" style="left:1709px;top:491px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W" alt="团龙纹"></div>
-            <span class="md-name">团龙岭</span>
-          </div>
-          <div class="mnode" data-node="2" style="left:1920px;top:1000px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SsQubarGBolsYtxAA6ycfOtan3g" alt="云锦九龙图"></div>
-            <span class="md-name">九龙潭</span>
-          </div>
-          <div class="mnode" data-node="3" style="left:1709px;top:1509px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c" alt="缂丝凤穿牡丹"></div>
-            <span class="md-name">凤穿谷</span>
-          </div>
-          <div class="mnode" data-node="4" style="left:1200px;top:1720px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/VLhCbfXjCoPUC0xw7FccX5U0nag" alt="翟鸟纹"></div>
-            <span class="md-name">翟鸟林</span>
-          </div>
-          <div class="mnode" data-node="5" style="left:691px;top:1509px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/Wr9Yb2dEvoYrSmx5AJ9cP1aenoi" alt="织机展陈"></div>
-            <span class="md-name">织造坊</span>
-          </div>
-          <div class="mnode" data-node="6" style="left:480px;top:1000px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://aka.doubaocdn.com/s/3aLaFyz66p" alt="黄地红蝠祥云织锦（福禄）"></div>
-            <span class="md-name">福禄滩</span>
-          </div>
-          <div class="mnode" data-node="7" style="left:691px;top:491px">
-            <div class="md-pulse"></div>
-            <div class="md-ring"><img src="https://aka.doubaocdn.com/s/dsk7G2wmFt" alt="褐地织金回纹锦"></div>
-            <span class="md-name">回纹关</span>
-          </div>
-        </div>
-        <div id="m-firsthint">八瓣宝相 · 一瓣一纹<small>左右上下滑动 · 八处纹样山河绕丝路之心次第绽放</small></div>
-        <div id="m-compass"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M12 3l4 5h-8z"/></svg><span>北</span></div>
-        <div id="m-minimap"><canvas id="mm-canvas" width="96" height="70"></canvas></div>
-        <div id="m-loc"><i></i><span id="m-loc-txt">织造坊 · 技艺之源</span></div>
-      </div>
-    </section>
-
-    <!-- ===== 第三章 · 纹样工坊（DIY 核心） ===== -->
-    <section class="ch" id="ch-studio">
-      <div class="s-head">
-        <span class="ch-no">第三章</span>
-        <h2>纹样工坊</h2>
-        <div class="s-steps"><i class="on"></i><i></i><i></i><i></i><i></i></div>
-      </div>
-      <div class="s-canvas-wrap">
-        <div id="studio-canvas">
-          <div class="s-tile" id="s-tile"></div>
-          <div class="s-empty" id="s-empty">
-            <svg viewBox="0 0 24 24"><path d="M4 20c0-8 4-12 12-12M14 4l6 6-4 2-2 4-6-6 4-2z"/></svg>
-            <p>素绢待织 · 静候纹样</p>
-            <span>轻点下方素材库，织入你的第一枚纹样</span>
-          </div>
-        </div>
-      </div>
-      <div class="s-toolbar t-off" id="s-toolbar">
-        <div class="tb-title">纹样已选中<em id="tb-name">—</em></div>
-        <div class="tb-colors" id="tb-colors"></div>
-        <div class="tb-acts">
-          <button data-act="smaller"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>缩小</button>
-          <button data-act="bigger"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>放大</button>
-          <button data-act="rotate"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-3-6.3"/><path d="M20 3v4h-4"/></svg>旋转</button>
-          <button data-act="flip"><svg viewBox="0 0 24 24"><path d="M4 8h16M8 8v13M4 8l3-4M20 8l-3-4"/></svg>翻转</button>
-          <button data-act="dup"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>复制</button>
-          <button data-act="del" class="danger"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>删除</button>
-        </div>
-      </div>
-      <div class="s-sub"><span class="ss-t">纹样素材库</span><span class="ss-en">Element Library</span></div>
-      <div class="librow" id="librow"></div>
-      <div class="s-sub"><span class="ss-t">织法</span><span class="ss-en">Weave Layout</span></div>
-      <div class="s-optrow" id="weave-row">
-        <button class="s-opt on" data-weave="solo">独幅</button>
-        <button class="s-opt" data-weave="er">二方连续</button>
-        <button class="s-opt" data-weave="si">四方连续</button>
-        <button class="s-opt" data-weave="san">散点花</button>
-      </div>
-      <div class="s-sub"><span class="ss-t">底布</span><span class="ss-en">Ground Cloth</span></div>
-      <div class="groundrow" id="ground-row"></div>
-      <div class="s-acts">
-        <button id="s-undo">撤销</button>
-        <button id="s-redo">重做</button>
-        <button id="s-clear">清空</button>
-        <button id="s-done" class="primary">完成织造</button>
-      </div>
-      <div style="height:16px"></div>
-    </section>
-
-    <!-- ===== 第四章 · 锦成 ===== -->
-    <section class="ch" id="ch-fin">
-      <div class="ch-head">
-        <span class="ch-no">第四章</span>
-        <h2>锦成</h2>
-        <span class="ch-en">THE WEAVE COMPLETE</span>
-      </div>
-      <div class="f-hero">
-        <div class="f-seal">锦成</div>
-        <h2>你的织作，已入藏</h2>
-        <p>数字织造馆 · <b id="f-count-txt">0</b> 件织作与你共藏<br>每一匹锦，都有它的经纬与来处</p>
-        <div class="f-count"><span>数字织造馆</span><span>江南织锦 · 纹样档案</span></div>
-      </div>
-      <div class="f-gallery" id="f-gallery"></div>
-      <div class="f-acts">
-        <button id="f-restudio">再织一匹</button>
-        <button id="f-remap">重游山河</button>
-        <button id="f-replay" class="primary">从头再游</button>
-      </div>
-      <div class="f-foot">
-        <p>锦织时序 · BROCADE CHRONICLE</p>
-        <p>以数字之纬，织千年之锦。与千年织工共藏。</p>
-      </div>
-    </section>
-  </div>
-
-  <!-- ===== 章节坞 ===== -->
-  <nav id="dock">
-    <button data-ch="0" class="on"><svg class="d-ico" viewBox="0 0 24 24"><ellipse cx="12" cy="13.5" rx="4.6" ry="6.8" transform="rotate(-16 12 13.5)"/><path d="M10 11q2 2 4 0M10 15q2 2 4 0"/><path d="M14.6 7.4c2.6-1.6 3.6-4.4 1.8-6.2"/></svg>织梦</button>
-    <button data-ch="1"><svg class="d-ico" viewBox="0 0 24 24"><path d="M3.5 16.5l4-5.2 3 3.2 3-4.2 7 7"/><path d="M3 20h18"/><circle cx="17.5" cy="7" r="1.7"/></svg>山河</button>
-    <button data-ch="2"><svg class="d-ico" viewBox="0 0 24 24"><path d="M5.5 4.5v15M18.5 4.5v15M5.5 7.5h13"/><path d="M8 12.5h8M14.2 10.6l3.8 1.9-3.8 1.9"/></svg>工坊</button>
-    <button data-ch="3"><svg class="d-ico" viewBox="0 0 24 24"><rect x="5.5" y="5.5" width="13" height="13" rx="3"/><path d="M12 9.2l3 2.8-3 2.8-3-2.8z"/></svg>锦成</button>
-  </nav>
-
-  <!-- ===== 模态 ===== -->
-  <div id="modal">
-    <div class="md-mask" id="md-mask"></div>
-    <div class="md-panel" id="md-panel"></div>
-  </div>
-
-  <div id="veil"><span class="v-line"></span></div>
-  <div id="toast"></div>
-  <canvas id="fx"></canvas>
-</div>
-  <!-- ===== 顶章 ===== -->
-  <div id="seal" title="回到开篇">
-    <span class="s-mark"><svg width="18" height="18" viewBox="0 0 24 24" style="stroke:var(--gold);fill:none;stroke-width:1.6"><path d="M4 6h16M4 12h10M4 18h16M7 6v12M14 12v6"/></svg></span>
-    <div class="s-txt"><b>锦织时序</b><i>BROCADE</i></div>
-  </div>
-
-  <!-- ===== 工坊新手引导 ===== -->
-  <div id="s-onboard">
-    <div class="ob-title">纹样工坊 · 开织须知</div>
-    <div class="ob-tips">
-      <div><svg viewBox="0 0 24 24"><path d="M9.5 11.5V6.2a1.6 1.6 0 013.2 0v4.6"/><path d="M12.7 10.8c.3 3.6 2.2 6.2 5.8 6.2 1.8 0 2.9-1 2.9-2.7 0-2.8-2.8-3.8-3.9-5.6l-1.8-1.2"/><circle cx="18.5" cy="6" r="1.3"/><path d="M18.5 2.6v1.4M21 6h-1.4M20.3 3.7l-1 1"/></svg><div><b>轻点素材 · 织入画布</b><span>从素材库选取纹样，一点即成</span></div></div>
-      <div><svg viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="7" height="7" rx="1.5"/><path d="M5.5 9.5a7 7 0 011.8-4M18.5 14.5a7 7 0 01-1.8 4"/><path d="M5.5 5.5v3h3M18.5 18.5v-3h-3"/></svg><div><b>拖动排版 · 双指缩放旋转</b><span>随心排布位置，双指捏合调整大小与角度</span></div></div>
-      <div><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3.6"/><path d="M8 5.4v1.2M5.9 7l.8.8M10.1 7l-.8.8"/><path d="M15 13.5l4.5 4.5M17 11.5l4.5 4.5"/><circle cx="15.6" cy="15.6" r=".6" fill="var(--gold)"/></svg><div><b>换色织法 · 落款入藏</b><span>配传统色谱、选织法，完成即可入藏织造馆</span></div></div>
-    </div>
-    <button id="ob-go">开织</button>
-  </div>
+<style>
+    body {
+        -webkit-text-size-adjust: 100% !important;
+    }
+</style>
+<body style="margin:0;padding:0;overflow:hidden;border:0;">
 
 <script>
-(function(){
-'use strict';
-const $=s=>document.querySelector(s), $$=s=>Array.prototype.slice.call(document.querySelectorAll(s));
-const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const app=$('#app'), stage=$('#stage');
+    var _mrmcp = {
+    "weixinAppId": "wx75babd529e23776c",
+    "redirect_url": "%LINK%?redir=",
+    "stat_host": "https://6ad63028cea6dd8f23077e75.stat.mugeda.com/stats/c.gif",
+        "impression_pixel": "%TRACKURL%",      // 统计像素地址
+        "data_server": "https://weika.mugeda.com",
+        "destination_url": "%DESTURL%",
+        "custom_params": "%CUSTOMPARAM%",
+        "common_path":"",
+        "version": "0.4.18",
+        "script_sub_path": "js",
+        "image_sub_path": "images",
+        "video_sub_path": "videos",
+        "audio_sub_path": "audios",
+        "font_sub_path": "fonts",
+        "css_sub_path": "css",
+        "description":"",
+        "thumb":"https://e.u.h5mc.com/c/0k_3/60lh/undefined",
+        "render_mode":"normal",
+        "receiptUrl": "",     // 邀请卡回执提交地址
+        "ticketUrl": "//card.mugeda.com/weixin/card/tickets/default_wx_js_ticket.json",       // 获取微信认证票据的地址
+        "eventUrl": ""         // 上报事件统计的地址
+    };
+</script>
+<script>
+    document.write('<script src="//card.mugeda.com/scripts/config.js?timestamp=' + ~~(new Date() / 60000) + '"></' + 'script>');
+</script>
 
-/* ================= 工具 ================= */
-let toastT;
-function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2300)}
-function flashVeil(){const v=$('#veil');v.classList.remove('show');void v.offsetWidth;v.classList.add('show');setTimeout(()=>v.classList.remove('show'),540)}
+    <script defer src="//res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    
+<script id="Mugeda_6ad63028cea6dd8f23077e75">
+    (function () {
+    function setCookie(c_name,value,expiredays){var exdate=new Date();var domain_parts=window.location.host.split('.');var len=domain_parts.length;var domain='';if(len>=2){domain='.'+domain_parts[len-2]+'.'+domain_parts[len-1];}else{domain='.mugeda.com';}exdate.setDate(exdate.getDate()+expiredays);document.cookie=c_name+"="+escape(value)+((expiredays==null)?"":";expires="+exdate.toGMTString())+"; domain="+domain+";path=/";}
 
-/* ================= 纹样符号库 ================= */
-const SYMS={
- chan:{name:'缠枝莲',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="var(--e3)" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".8"><path d="M10 96 C 30 88, 40 66, 34 44"/><path d="M110 94 C 92 84, 82 62, 88 42"/><path d="M18 74 C 36 70, 46 78, 48 62"/><path d="M104 70 C 86 66, 76 74, 74 58"/></g><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".8"><ellipse cx="60" cy="50" rx="10" ry="22" transform="rotate(-22 60 50)"/><ellipse cx="60" cy="50" rx="10" ry="22" transform="rotate(22 60 50)"/><ellipse cx="60" cy="54" rx="10" ry="21" transform="rotate(0 60 54)"/></g><g fill="var(--e2)"><ellipse cx="60" cy="54" rx="6.4" ry="14.5" transform="rotate(-40 60 54)"/><ellipse cx="60" cy="54" rx="6.4" ry="14.5" transform="rotate(40 60 54)"/></g><circle cx="60" cy="58" r="4.6" fill="var(--e3)"/><circle cx="60" cy="58" r="2" fill="var(--e2)"/><g fill="var(--e2)" opacity=".9"><path d="M34 82 q8 -16 20 -16 q-4 14 -16 19z"/><path d="M86 80 q-8 -16 -20 -16 q4 14 16 19z"/></g><g stroke="var(--e3)" stroke-width="1.1" fill="none" opacity=".6"><path d="M46 98 q4 -10 14 -12"/><path d="M74 98 q-4 -10 -14 -12"/></g></svg>'},
- long:{name:'团龙',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="47" stroke="var(--e3)" stroke-width="2.4" opacity=".92"/><circle cx="60" cy="60" r="40.5" stroke="var(--e3)" stroke-width=".8" opacity=".5"/><g stroke="var(--e3)" stroke-width="1.1" opacity=".6" fill="none" stroke-linecap="round"><path d="M24 40 q7 -6 13 -3"/><path d="M96 40 q-7 -6 -13 -3"/><path d="M30 82 q6 6 13 4"/><path d="M90 82 q-6 6 -13 4"/></g><path d="M60 24 C 90 24 97 42 89 60 C 83 74 63 86 47 86 C 27 86 24 68 34 58 C 42 50 51 55 45 63" stroke="var(--e1)" stroke-width="7.4" stroke-linecap="round" fill="none"/><path d="M84 37 c11 -2 17 -11 15 -19 c-6 2 -12 9 -15 19z" fill="var(--e1)"/><path d="M57 27 c4 -9 15 -11 21 -9 c-3 9 -11 13 -21 9z" fill="var(--e1)"/><g stroke="var(--e3)" stroke-width="1.2" fill="none" opacity=".5"><path d="M48 52 q2 8 0 14"/><path d="M54 56 q2 8 0 14"/><path d="M60 52 q2 8 0 14"/><path d="M48 72 q6 6 12 4"/></g><circle cx="46.5" cy="59" r="2.8" fill="#14100A"/><path d="M39 69 q6 4 11 2" stroke="var(--e3)" stroke-width="1.4" fill="none"/><g stroke="var(--e3)" stroke-width="2.1" stroke-linecap="round" fill="none" opacity=".92"><path d="M30 80 q-7 -9 -2 -17"/><path d="M93 72 q7 -9 2 -17"/><path d="M71 94 q8 -4 12 -2"/><path d="M44 96 q-7 -4 -11 0"/></g><circle cx="82" cy="47" r="3.4" fill="var(--e2)"/><g stroke="var(--e3)" stroke-width="1.3" opacity=".7" fill="none"><path d="M33 33 q5 7 11 5"/><path d="M87 87 q-5 7 -11 5"/></g></svg>'},
- yun:{name:'祥云',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 84 q-14 -2 -16 -16 q12 -2 14 -11 q13 -9 24 -2 q5 -13 18 -13 q11 0 13 11 q13 2 13 15 q-9 5 -9 13 q-15 5 -22 -2 q-7 7 -15 7 q-11 0 -20 -2z" fill="var(--e1)" stroke="var(--e3)" stroke-width="1.5" stroke-linejoin="round"/><path d="M38 84 q2 9 13 9" stroke="var(--e3)" stroke-width="1.4" fill="none" stroke-linecap="round"/><circle cx="66" cy="52" r="7" fill="var(--e2)"/><path d="M92 74 q4 -6 12 -4" stroke="var(--e3)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>'},
- fu:{name:'蝠纹',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 48 c-6 -15 -22 -22 -38 -17 c5 9 3 20 -5 26 c9 3 13 9 13 18 c9 -5 17 -7 30 -7 s21 2 30 7 c0 -9 4 -15 13 -18 c-8 -6 -10 -17 -5 -26 c-16 -5 -32 2 -38 17z" fill="var(--e1)" stroke="var(--e3)" stroke-width="1.5" stroke-linejoin="round"/><path d="M22 36 q-12 -7 -18 -1 q3 11 14 13" fill="var(--e2)"/><path d="M98 36 q12 -7 18 -1 q-3 11 -14 13" fill="var(--e2)"/><circle cx="53" cy="44" r="2" fill="#14100A"/><circle cx="67" cy="44" r="2" fill="#14100A"/><path d="M56 58 q4 4 8 0" stroke="var(--e3)" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M60 52 v12" stroke="var(--e3)" stroke-width="1.3" stroke-linecap="round"/></svg>'},
- lu:{name:'鹿纹',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M36 92 q3 -20 12 -32 q-9 -2 -11 -11 q7 -2 9 -9 q11 -13 26 -13 q11 0 17 9 q-7 3 -7 11 l9 4 q-3 9 -11 11 q9 11 5 30 h-15 q-5 -9 -13 -11 q-9 2 -13 11z" fill="var(--e1)" stroke="var(--e3)" stroke-width="1.5" stroke-linejoin="round"/><path d="M38 54 q-5 7 -12 7 q-3 -9 7 -13 q4 0 5 6z" fill="var(--e2)"/><path d="M63 30 q-3 -11 5 -17 q7 5 9 13 q-5 7 -14 4z" fill="var(--e2)"/><path d="M71 28 q3 -9 9 -13 q5 9 3 15 q-7 5 -12 -2z" fill="var(--e2)"/><circle cx="56" cy="66" r="2.2" fill="#14100A"/><path d="M50 74 q4 -4 9 -3" stroke="var(--e3)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>'},
- yu:{name:'鱼纹',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26 60 q14 -24 42 -24 q21 0 34 15 q-11 9 -11 19 q0 10 11 19 q-13 15 -34 15 q-28 0 -42 -24 q13 -9 13 -20 q0 -12 -13 -20z" fill="var(--e1)" stroke="var(--e3)" stroke-width="1.5" stroke-linejoin="round"/><circle cx="56" cy="60" r="2.6" fill="#14100A"/><path d="M87 61 q11 -9 17 -15 q-3 14 -3 14z" fill="var(--e2)" stroke="var(--e3)" stroke-width="1.2"/><g stroke="var(--e3)" stroke-width="1.1" opacity=".55" fill="none"><path d="M48 46 q7 14 0 28"/><path d="M64 42 q7 18 0 36"/><path d="M79 46 q5 14 -2 26"/></g><path d="M34 48 q8 6 14 2" stroke="var(--e3)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>'},
- mudan:{name:'牡丹',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><g fill="var(--e1)" stroke="var(--e3)" stroke-width="1.1" stroke-linejoin="round"><path d="M60 68 c-2 -15 -15 -23 -30 -19 c2 13 13 21 26 23z"/><path d="M60 68 c2 -15 15 -23 30 -19 c-2 13 -13 21 -26 23z"/><path d="M60 68 c-11 -9 -28 -7 -35 4 c11 7 24 9 35 2z"/><path d="M60 68 c11 -9 28 -7 35 4 c-11 7 -24 9 -35 2z"/></g><g fill="var(--e2)"><path d="M60 72 c-2 -11 -13 -17 -24 -14 c2 10 11 15 24 16z"/><path d="M60 72 c2 -11 13 -17 24 -14 c-2 10 -11 15 -24 16z"/><path d="M60 74 c-9 -6 -19 -4 -23 4 c8 4 16 5 23 0z"/><path d="M60 74 c9 -6 19 -4 23 4 c-8 4 -16 5 -23 0z"/></g><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".7" opacity=".85"><circle cx="60" cy="73.5" r="3.8"/></g><circle cx="60" cy="73.5" r="1.7" fill="var(--e2)"/><g stroke="var(--e2)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".85"><path d="M36 90 q-9 11 -20 9 q2 -11 13 -15 q8 0 7 6z"/><path d="M84 90 q9 11 20 9 q-2 -11 -13 -15 q-8 0 -7 6z"/></g><g stroke="var(--e3)" stroke-width="1" fill="none" opacity=".55"><path d="M40 84 q5 6 12 4"/><path d="M80 84 q-5 6 -12 4"/></g></svg>'},
- zhiniao:{name:'翟鸟',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38 72 q-5 -19 9 -32 q15 -15 32 -9 q-3 9 5 11 q11 2 13 13 q-9 7 -11 17 q7 7 2 15 q-13 -5 -22 2 q-13 9 -28 3 q-2 -9 0 -20z" fill="var(--e1)" stroke="var(--e3)" stroke-width="1.5" stroke-linejoin="round"/><path d="M52 35 q-3 -9 5 -13 q7 3 9 9 q-5 7 -14 4z" fill="var(--e2)"/><circle cx="46" cy="55" r="2.2" fill="#14100A"/><path d="M76 66 q17 0 25 9 q-15 5 -21 15 q-11 -9 -4 -24z" fill="var(--e2)" stroke="var(--e3)" stroke-width="1.2"/><g stroke="var(--e2)" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".9"><path d="M78 71 q12 3 18 9"/><path d="M75 78 q11 7 15 13"/><path d="M71 84 q9 7 9 15"/></g><path d="M41 76 q-7 5 -11 0" stroke="var(--e3)" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>'},
- huiwen:{name:'回纹',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="18" width="84" height="84" rx="9" stroke="var(--e3)" stroke-width="1.6" opacity=".7"/><rect x="22" y="22" width="76" height="76" rx="8" stroke="var(--e1)" stroke-width="4.6"/><path d="M34 34 h52 v12 h-40 v12 h28 v12 h-40 v12 h28 v12 h-40 v12 h52 v14 h-64 z" fill="none" stroke="var(--e2)" stroke-width="4" stroke-linejoin="miter"/></svg>'},
- ruyi:{name:'如意',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 24 v58 M60 82 q-11 13 -26 11 M60 82 q11 13 26 11" stroke="var(--e1)" stroke-width="3.6" stroke-linecap="round"/><path d="M40 32 q-9 -9 -2 -15 q6 0 10 9 q-4 4 -8 6z" fill="var(--e2)" stroke="var(--e3)" stroke-width="1.2"/><path d="M80 32 q9 -9 2 -15 q-6 0 -10 9 q4 4 8 6z" fill="var(--e2)" stroke="var(--e3)" stroke-width="1.2"/><circle cx="60" cy="25" r="5.2" fill="var(--e2)"/><path d="M44 90 q4 -9 16 -9 q12 0 16 9" fill="var(--e2)" stroke="var(--e3)" stroke-width="1.2"/></svg>'},
- fangsheng:{name:'方胜',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="26" y="20" width="68" height="68" rx="6" transform="rotate(45 60 54)" fill="var(--e1)" stroke="var(--e3)" stroke-width="2.6"/><rect x="26" y="42" width="68" height="68" rx="6" transform="rotate(45 60 76)" fill="var(--e2)" stroke="var(--e3)" stroke-width="2.6" opacity=".92"/></svg>'},
- baoxiang:{name:'宝相花',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".9"><ellipse cx="60" cy="22" rx="9" ry="21" transform="rotate(45 60 60)"/><ellipse cx="60" cy="22" rx="9" ry="21" transform="rotate(135 60 60)"/><ellipse cx="60" cy="22" rx="9" ry="21" transform="rotate(225 60 60)"/><ellipse cx="60" cy="22" rx="9" ry="21" transform="rotate(315 60 60)"/></g><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".9"><ellipse cx="60" cy="30" rx="8" ry="17" transform="rotate(0 60 60)"/><ellipse cx="60" cy="30" rx="8" ry="17" transform="rotate(90 60 60)"/><ellipse cx="60" cy="30" rx="8" ry="17" transform="rotate(180 60 60)"/><ellipse cx="60" cy="30" rx="8" ry="17" transform="rotate(270 60 60)"/></g><g fill="var(--e2)" stroke="var(--e3)" stroke-width=".7"><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(22.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(67.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(112.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(157.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(202.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(247.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(292.5 60 60)"/><ellipse cx="60" cy="44" rx="6.4" ry="13" transform="rotate(337.5 60 60)"/></g><circle cx="60" cy="60" r="15" fill="var(--e1)" stroke="var(--e3)" stroke-width="1.2"/><circle cx="60" cy="60" r="8.6" fill="var(--e2)" stroke="var(--e3)" stroke-width=".9"/><circle cx="60" cy="60" r="3.4" fill="var(--e3)"/><g stroke="var(--e3)" stroke-width="1.1" fill="none" opacity=".5"><path d="M60 22 v-8 M60 98 v-8 M22 60 h-8 M98 60 h8"/></g></svg>'},
- rendong:{name:'忍冬纹',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 10 C 30 34 30 64 60 110 C 90 64 90 34 60 10z" fill="none" stroke="var(--e3)" stroke-width="1.6" opacity=".5"/><path d="M60 24 C 76 40 76 66 60 96" stroke="var(--e1)" stroke-width="4" stroke-linecap="round" fill="none"/><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".8"><path d="M60 22 q14 -9 26 0 q-7 12 -26 10z"/><path d="M60 48 q14 -9 26 0 q-7 12 -26 10z"/><path d="M60 74 q14 -9 26 0 q-7 12 -26 10z"/></g><g fill="var(--e2)" stroke="var(--e3)" stroke-width=".7" opacity=".9"><path d="M60 30 q-14 -9 -26 0 q7 12 26 10z"/><path d="M60 56 q-14 -9 -26 0 q7 12 26 10z"/><path d="M60 82 q-14 -9 -26 0 q7 12 26 10z"/></g><circle cx="60" cy="100" r="4" fill="var(--e2)"/></svg>'},
- lianzhu:{name:'联珠团窠',svg:'<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="44" stroke="var(--e3)" stroke-width="1.6"/><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".5"><circle cx="60" cy="14" r="5.2"/><circle cx="60" cy="14" r="5.2" transform="rotate(30 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(60 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(90 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(120 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(150 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(180 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(210 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(240 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(270 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(300 60 60)"/><circle cx="60" cy="14" r="5.2" transform="rotate(330 60 60)"/></g><g fill="var(--e1)" stroke="var(--e3)" stroke-width=".8"><ellipse cx="60" cy="42" rx="7.4" ry="14" transform="rotate(45 60 60)"/><ellipse cx="60" cy="42" rx="7.4" ry="14" transform="rotate(135 60 60)"/><ellipse cx="60" cy="42" rx="7.4" ry="14" transform="rotate(225 60 60)"/><ellipse cx="60" cy="42" rx="7.4" ry="14" transform="rotate(315 60 60)"/></g><circle cx="60" cy="60" r="13" fill="var(--e2)" stroke="var(--e3)" stroke-width="1"/><circle cx="60" cy="60" r="5" fill="var(--e3)"/><path d="M38 84 q8 10 16 4" stroke="var(--e3)" stroke-width="1.1" fill="none" opacity=".6"/><path d="M82 84 q-8 10 -16 4" stroke="var(--e3)" stroke-width="1.1" fill="none" opacity=".6"/></svg>'}
+    function getCookie(name) {
+      var value = "; " + document.cookie;
+      var parts = value.split("; " + name + "=");
+      if (parts.length == 2) return unescape(parts.pop().split(";").shift());
+    }
+
+    function getQueryParams() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    if (/vt=(\w+)\&?/.test(location.search)) {
+        var versionTag = RegExp.$1;
+        setCookie('__mugeda_vid',versionTag,60*60*24*3600);
+    } else {
+        setCookie('__mugeda_vid','',-3600);
+    }
+    window['Mugeda'] = window['Mugeda'] || {};
+    window['Mugeda']['data'] = window['Mugeda']['data'] || {};
+
+    var stageDom = document.getElementById((window._mrmcp || {})['script_id'] || "Mugeda_6ad63028cea6dd8f23077e75")
+
+    _mrmcp = (typeof _mrmcp == 'undefined') ? {} : _mrmcp;
+_mrmcp['campaign_id'] = 'none';
+_mrmcp['owner_id'] = '6aa8b7aa5ec16628d00ec574';
+_mrmcp['creative_id'] = '6ad63028cea6dd8f23077e75';
+_mrmcp['ga_url'] = _mrmcp['ga_url'] || (('https:' == document.location.protocol ? 'https://' : 'http://') + 'card.mugeda.com/weixin/card/ga.js');
+_mrmcp['width'] = _mrmcp['width'] || 320;
+_mrmcp['height'] = _mrmcp['height'] || 626;
+_mrmcp['type'] = 'smart';
+_mrmcp['title'] = '锦织时序｜一梭织江南';
+_mrmcp['build_number'] = parseInt('418');
+_mrmcp['publish_time'] = 'Wed Oct 21 2026 14:02:30 GMT+0800 (China Standard Time)';
+_mrmcp['last_modified'] = '';
+_mrmcp['jsapi_config_url'] = '';
+_mrmcp['stat_host'] = 'https://6ad63028cea6dd8f23077e75.stat.mugeda.com/stats/c.gif';
+_mrmcp['track_bot'] = 'http://cd.mugeda.com/media/pages/track/track_20131030.html';
+_mrmcp['wechat_thumb_scheme'] = 'https';
+_mrmcp['data_server'] = "https://weika.mugeda.com";
+_mrmcp['customer_visitor_tailor_uid'] = "";
+var version = _mrmcp['version'] = _mrmcp['version'] != null ? _mrmcp['version'] : '0.4.18';
+
+if(version!='')
+    version = '_' + version;
+
+var w = _mrmcp['width'];
+var h = _mrmcp['height'];
+if (!_mrmcp['creative_path']) {
+    var scripts = document.getElementsByTagName('script');
+    var src = scripts[scripts.length - 1].getAttribute('src');
+    if (src == null || src.lastIndexOf('/') < 0) {
+        var href = location.protocol +'//' + location.host + location.pathname;
+        _mrmcp['creative_path'] = href.substr(0, href.lastIndexOf('/') + 1);
+    }
+    else
+        _mrmcp['creative_path'] = src.substr(0, idx + 1);
+}
+
+if (_mrmcp['host']){
+    var pathNames = ['creative_path', 'common_path'];
+    for (var i = 0, l = pathNames.length; i < l; i ++) {
+        var pathName = pathNames[i];
+
+        if (_mrmcp[pathName]) {
+            var pathOriStr = _mrmcp[pathName];
+            if(pathOriStr.indexOf('//') === 0) pathOriStr = location.protocol + pathOriStr;
+            var pattern = /^(?:(\w+):\/\/)?(?:(\w+):?(\w+)?@)?([^:\/\?#]+)(?::(\d+))?(\/[^\?#]+)?(?:\?([^#]+))?(?:#(\w+))?/;
+            var r = pattern.exec(pathOriStr);
+
+            _mrmcp[pathName] = [ _mrmcp[pathName] ];
+            for (var j = 0, k = _mrmcp['host'].length; j < k; j ++) {
+                var host = _mrmcp['host'][j];
+                var s = '';
+                //if(r[1]) s += r[1] + ':'; //http
+                //s += '//';
+                //if(r[2]) s += r[2] + ':'; //username
+                //if(r[3]) s += r[3] + '@'; //password
+                s += host; //host
+                if (r[6]) s += r[6];
+                if (r[7]) s += '?' + r[7];
+                if (r[8]) s += '#' + r[8];
+                _mrmcp[pathName].push(s);
+            }
+        }
+    }
+}
+
+    "default-start";
+window.Mugeda = window.Mugeda || { data: {} };
+window.Mugeda.loadProcessHandle = window.Mugeda.loadProcessHandle || {};
+Mugeda.loadProcessHandle['default'] = function(opt) {
+    opt = opt || {};
+    var thisAni = opt.thisAni;
+    this.dom = opt.stageDom || thisAni.dom;
+    this.type = 'default';
 };
-const LIB=['chan','long','yun','fu','lu','yu','mudan','zhiniao','huiwen','ruyi','fangsheng','baoxiang','rendong','lianzhu'];
-/* 素材库金色单线描图标（依据真实传统纹样提炼，统一金线） */
-const LIG={
- chan:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 36c-4 10-4 22 0 32"/><path d="M60 36c4 10 4 22 0 32"/><path d="M47 46c-8 6-10 18-4 27M73 46c8 6 10 18 4 27"/><path d="M50 70q-8 8-18 6M70 70q8 8 18 6"/><circle cx="60" cy="60" r="3.5"/><path d="M36 96c-6-16 2-28 12-34M84 96c6-16-2-28-12-34"/><path d="M32 86q-8-3-8-12M88 86q8-3 8-12"/></svg>',
- long:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="60" r="48"/><circle cx="60" cy="34" r="7"/><path d="M56 29l-3-7M64 29l3-7"/><path d="M57 38q3 3 6 0"/><path d="M60 42c16 0 26 12 23 26-3 14-18 20-30 14-11-5-13-19-4-26"/><path d="M52 62q4 6 10 6"/><path d="M40 86q-9 1-12-7M80 88q9 1 12-7"/></svg>',
- yun:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M34 78q-12-2-14-14 8-2 10-9 9-8 19-2 4-11 15-11 10 0 12 9 11 2 11 13-8 5-9 12-13 4-19-1-6 6-15 3z"/><path d="M46 78q2 8 11 8M74 66q5-5 11-3M56 60q3 3 0 7"/></svg>',
- fu:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="50" r="7"/><path d="M54 46l-3-5M66 46l3-5"/><path d="M53 52c-10-2-20-10-24-22 8 2 13 0 16-8 3 8 9 12 18 12"/><path d="M67 52c10-2 20-10 24-22-8 2-13 0-16-8-3 8-9 12-18 12"/><path d="M40 30q-6-4-7-1M80 30q6-4 7-1"/><path d="M57 58q3 4 6 0"/></svg>',
- lu:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 40l-8 10v18q0 10 8 14 8-4 8-14V50z"/><path d="M53 44l-9-14 6 2M67 44l9-14-6 2"/><path d="M53 34l-3-8M67 34l3-8"/><path d="M50 58q3 3 0 6M70 58q-3 3 0 6"/><circle cx="56" cy="52" r="1"/><circle cx="64" cy="52" r="1"/></svg>',
- yu:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 60q16-18 36-12 12 3 18 12-6 9-18 12-20 6-36-12z"/><path d="M84 60l12-10v20z"/><circle cx="42" cy="58" r="1.6"/><path d="M52 52q4 8 0 16M62 50q4 10 0 20M72 53q3 7 0 14"/></svg>',
- mudan:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 44c-3-10-14-12-20-4 2 8 10 12 20 12z"/><path d="M60 44c3-10 14-12 20-4-2 8-10 12-20 12z"/><path d="M42 58c-10-2-16 8-10 16 8 4 16 0 20-8z"/><path d="M78 58c10-2 16 8 10 16-8 4-16 0-20-8z"/><circle cx="60" cy="62" r="8"/><path d="M52 84q-6 8-16 8M68 84q6 8 16 8"/></svg>',
- zhiniao:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M46 64q4-16 18-16 9 0 13 7l16 20-18-5q-1 9-11 9-13 0-18-15z"/><circle cx="62" cy="48" r="6"/><path d="M59 43l-3-8M65 43l3-8"/><path d="M52 80v7M60 82v7"/><path d="M82 80l14 18M77 78l12 20"/></svg>',
- huiwen:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="20" y="20" width="80" height="80"/><rect x="36" y="36" width="48" height="48"/><path d="M20 42h16M20 60h16M20 78h16M100 42H84M100 60H84M100 78H84M42 20v16M60 20v16M78 20v16M42 100V84M60 100V84M78 100V84"/></svg>',
- ruyi:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 26q-14 0-16 12 6 4 12 2 2 8 10 8 8 0 10-8 6 2 12-2-2-12-16-12z"/><path d="M60 48v44q0 8-8 10"/><path d="M52 96q8 4 16 0"/><circle cx="60" cy="34" r="3"/></svg>',
- fangsheng:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="30" width="60" height="60" rx="4" transform="rotate(45 60 60)"/><rect x="30" y="30" width="60" height="60" rx="4" transform="rotate(-45 60 60)"/></svg>',
- baoxiang:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="60" cy="60" r="48"/><ellipse cx="60" cy="38" rx="7" ry="13"/><ellipse cx="60" cy="82" rx="7" ry="13"/><ellipse cx="38" cy="60" rx="13" ry="7"/><ellipse cx="82" cy="60" rx="13" ry="7"/><ellipse cx="44" cy="44" rx="6" ry="11" transform="rotate(45 44 44)"/><ellipse cx="76" cy="44" rx="6" ry="11" transform="rotate(-45 76 44)"/><ellipse cx="44" cy="76" rx="6" ry="11" transform="rotate(-45 44 76)"/><ellipse cx="76" cy="76" rx="6" ry="11" transform="rotate(45 76 76)"/><circle cx="60" cy="60" r="9"/><circle cx="60" cy="60" r="3"/></svg>',
- rendong:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 18v84"/><path d="M60 32q-16 0-20-14 14-4 20 8M60 50q16 0 20-14-14-4-20 8M60 70q-16 0-20-14 14-4 20 8M60 90q16 0 20-14-14-4-20 8"/><path d="M40 24q-6-2-7-8M80 96q6 2 7 8"/></svg>',
- lianzhu:'<svg viewBox="0 0 120 120" fill="none" stroke="var(--gold-soft)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><circle cx="60" cy="16" r="5"/><circle cx="60" cy="16" r="5" transform="rotate(30 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(60 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(90 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(120 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(150 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(180 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(210 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(240 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(270 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(300 60 60)"/><circle cx="60" cy="16" r="5" transform="rotate(330 60 60)"/></g><circle cx="60" cy="60" r="24"/><circle cx="52" cy="60" r="3"/><circle cx="68" cy="60" r="3"/></svg>'
+Mugeda.loadProcessHandle['default'].prototype.init = function (stageDom, pos) {
+    if (this.inited) return;
+    this.inited = true;
+
+    if(pos == null){
+        pos = ['top:0;left:0;width:100%;height:100%;'];
+    }
+
+    var html = '' +
+        '<div style="z-index:20;position: absolute;background: #F2F2F2;'+ pos[0] +'">' +
+        '   <div style="position: absolute;width: 100%;top:20%;color:white;text-align: center;font-size: 12px;">' +
+        '       <svg viewBox="0, 0, 303, 200" style="height:132px">' +
+        '           <foreignobject width="303" height="200">' +
+        '               <div style="width:303px;height:200px;background: url(\'./images/sprites.png\') no-repeat; animation: keyframes-default 1.56s 0s infinite forwards steps(1)"></div>' +
+        '           </foreignobject>' +
+        '       </svg>' +
+        '   </div>' +
+        '   <div style="position: absolute;width: 100%;bottom:60px;color:#A0A0A0;text-align: center;font-size: 12px;">' +
+        '   <div class="mugeda_percent" style="margin: 6px auto; width: 0; height: 2px; border-left: solid 0 #FF9C50; border-right: solid 86px #DCDCDC;"></div>' +
+        '   作品由木疙瘩创建' +
+        '   </div>' +
+        '</div>';
+    var dom = document.createElement('div');
+    dom.innerHTML = html;
+    this.node = dom.childNodes[0];
+    this.dom.parentNode.appendChild(this.node);
+
+    var css = "@keyframes keyframes-default {\n" +
+        "    0% {}\n" +
+        "\n" +
+        "    3.85% {\n" +
+        "        background-position: -323px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    7.69% {\n" +
+        "        background-position: -646px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    11.54% {\n" +
+        "        background-position: -969px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    15.38% {\n" +
+        "        background-position: -1292px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    19.23% {\n" +
+        "        background-position: -1615px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    23.08% {\n" +
+        "        background-position: -1938px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    26.92% {\n" +
+        "        background-position: -2261px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    30.77% {\n" +
+        "        background-position: -2584px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    34.62% {\n" +
+        "        background-position: -2907px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    38.46% {\n" +
+        "        background-position: -3230px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    42.31% {\n" +
+        "        background-position: -3553px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    46.15% {\n" +
+        "        background-position: -3876px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    50.00% {\n" +
+        "        background-position: -4199px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    53.85% {\n" +
+        "        background-position: -4522px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    57.69% {\n" +
+        "        background-position: -4845px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    65.38% {\n" +
+        "        background-position: -5168px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    69.23% {\n" +
+        "        background-position: -5491px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    76.92% {\n" +
+        "        background-position: -5814px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    80.77% {\n" +
+        "        background-position: -6137px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    84.62% {\n" +
+        "        background-position: -6460px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    88.46% {\n" +
+        "        background-position: -6783px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    92.31% {\n" +
+        "        background-position: -7106px 0px;\n" +
+        "    }\n" +
+        "\n" +
+        "    96.15%,\n" +
+        "    100% {\n" +
+        "        background-position: -7429px 0px;\n" +
+        "    }\n" +
+        "}";
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    var textNode = document.createTextNode(css);
+    style.appendChild(textNode);
+    document.body.appendChild(style);
+
+    this.prevPercent = 0;
 };
-const PALS=[
- {name:'藏青金',c:['#6B2E15','#C9A96A','#F0DFB6']},
- {name:'朱砂红',c:['#A63B2A','#C0563F','#E8CF9A']},
- {name:'松石绿',c:['#2F6B5A','#9DBB8A','#E8CF9A']},
- {name:'黛紫',c:['#6B3A50','#C97B84','#E6C79A']},
- {name:'明黄',c:['#C9A437','#E8CE97','#F7EFD9']},
- {name:'藕荷',c:['#C97B84','#F0C9C0','#F7EFD9']},
- {name:'玄墨',c:['#3A2412','#B08E4E','#D8BC7E']},
- {name:'缃叶',c:['#8A9A5B','#C9B458','#F0E4C4']}
-];
-const GROUNDS=[
- {name:'玄青',c:'#5E2A15'},{name:'朱砂',c:'#7E1F18'},{name:'松绿',c:'#15332A'},
- {name:'黛紫',c:'#5E3044'},{name:'米金',c:'#E6D5AE'},{name:'玄黑',c:'#191008'}
-];
-const NODES=[
- {name:'缠枝洲',title:'缠枝莲纹',sub:'宋锦 · 文人雅意',meaning:'生生不息 · 绵延不绝',
-  story:'缠枝纹以藤蔓波状连绵，枝随花转、韵致婉转。宋人以莲入织，取其「出淤泥而不染」。一花一蔓之间，藏着士大夫的清雅与「生生不息」的祈愿。',
-  colors:['#8A5A2B','#C9A96A','#8E3B2A','#E8D9B8'],x:1200,y:280,img:'https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/BIUbb6AyvozRohxnH2bcotPEnQc',sym:'chan'},
- {name:'团龙岭',title:'团龙纹',sub:'云锦 · 皇家御用',meaning:'皇权尊荣 · 九五之尊',
-  story:'龙形盘踞成团，配云纹火焰，是御用织物的主角。妆花缎上的团龙威仪赫赫，象征皇权与尊荣——「九五之尊，龙行天下」。',
-  colors:['#7E1F18','#C9A96A','#1F3A34','#E8D9B8'],x:1709,y:491,img:'https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/TElfb3fo2oaYl3xIKwqcsaXfn4W',sym:'long'},
- {name:'九龙潭',title:'云锦九龙',sub:'江宁织造 · 镇馆之宝',meaning:'九五之尊 · 威仪赫赫',
-  story:'江宁织造所制妆花缎上，九条龙纹形态各异、腾挪生姿。它是云锦「妆花」技艺的巅峰——万缕金线织就，一寸九分，尽显盛世气象。',
-  colors:['#7E1F18','#C9A96A','#6B2E15','#E8D9B8'],x:1920,y:1000,img:'https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SsQubarGBolsYtxAA6ycfOtan3g',sym:'long'},
- {name:'凤穿谷',title:'凤穿牡丹',sub:'缂丝 · 织中之圣',meaning:'富贵吉祥 · 和美如意',
-  story:'凤凰穿行于牡丹之间——凤为百鸟之王，牡丹为花中之王。缂丝以「通经断纬」织出如雕镂之象，一梭一色，寸丝寸金。',
-  colors:['#7E1F18','#C9A96A','#2F4F3E','#E8D9B8'],x:1709,y:1509,img:'https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/El8jbkS5Qoj3hqxCbaPc1tu6n1c',sym:'mudan'},
- {name:'翟鸟林',title:'翟鸟纹',sub:'宋锦 · 仪礼华章',meaning:'威仪有度 · 仪态端方',
-  story:'翟鸟为皇后仪服所用，雉羽华美、仪态端方。宋锦以细密经纬重现其羽翼光泽，纹样之间，是礼制与审美的双重秩序。',
-  colors:['#1F4CA8','#D8BC7E','#112A6D','#E8D9B8'],x:1200,y:1720,img:'https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/VLhCbfXjCoPUC0xw7FccX5U0nag',sym:'zhiniao'},
- {name:'织造坊',title:'挑花结本',sub:'大花楼织机 · 技艺之源',meaning:'一寸一工 · 匠心为尺',
-  story:'以丝为经、棉为纬，将纹样逐格编成「花本」——这是古代织机的「编程」。拽花工与织手一上一下，一天仅织五厘米，错一线则前功尽弃。',
-  colors:['#8A5A2B','#C9A96A','#8C6F3A','#E8D9B8'],x:691,y:1509,img:'https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/Wr9Yb2dEvoYrSmx5AJ9cP1aenoi',sym:'fangsheng'},
- {name:'福禄滩',title:'蝠鹿鱼',sub:'民俗 · 婚嫁吉庆',meaning:'福禄有余 · 家有万金',
-  story:'蝠谐「福」、鹿谐「禄」、鱼谐「余」。江南人家把全家祈愿织进嫁衣：一只蝠、一头鹿、一尾鱼，便是一生「福禄有余」的暗语。',
-  colors:['#8E3B2A','#D8BC7E','#2F4F3E','#E8D9B8'],x:480,y:1000,img:'https://aka.doubaocdn.com/s/3aLaFyz66p',sym:'fu'},
- {name:'回纹关',title:'回纹',sub:'织锦边饰 · 吉祥几何',meaning:'连绵不绝 · 富贵不断头',
-  story:'回纹以横竖短线折绕成「回」字，如江河回环、生生不息。常作锦边与地纹，取「富贵不断头」之美意，是织锦中最安静的守护。',
-  colors:['#2F4F3E','#C9A96A','#8E3B2A','#E8D9B8'],x:691,y:491,img:'https://aka.doubaocdn.com/s/dsk7G2wmFt',sym:'huiwen'}
-];
+Mugeda.loadProcessHandle['default'].prototype.update = function (num, all, opt) {
+    opt = opt || {};
 
-/* ================= 载入序章 ================= */
-const loader=$('#loader');
-let loaderReady=false, entered=false;
-function startLoader(){
-  $('#ld-weave').classList.add('run');
-  const fill=$('#lp-fill'), num=$('#lp-num');
-  let wc=0;
-  const render=()=>{const p=Math.min(100,wc);fill.style.transform='scaleX('+(p/100)+')';num.textContent=Math.round(p)+'%';};
-  const reveal=()=>{loaderReady=true;$('#ld-kicker').classList.add('go');$('#ld-title').classList.add('go');setTimeout(()=>{$('#ld-en').classList.add('go');$('#ld-desc').classList.add('go');setTimeout(()=>$('#ld-enter').classList.add('show'),300);},620);};
-  const iv=setInterval(()=>{
-    wc=Math.min(100,wc+Math.random()*9+4);render();
-    if(wc>=100){clearInterval(iv);setTimeout(reveal,200);}
-  },120);
-  loader._fast=()=>{clearInterval(iv);wc=100;render();loaderReady=true;$('#ld-kicker').classList.add('go');$('#ld-title').classList.add('go');$('#ld-en').classList.add('go');$('#ld-desc').classList.add('go');$('#ld-enter').classList.add('show');};
-}
-function enterMain(){
-  if(entered)return; entered=true;
-  loader.classList.add('out');
-  $('#dock').classList.add('show'); $('#seal').classList.add('show');
-  setTimeout(()=>{loader.style.display='none';},620);
-}
-loader.addEventListener('click',e=>{
-  if(entered)return;
-  if(!loaderReady){loader._fast();if(!e.target.closest('#ld-btn'))enterMain();return;}
-  if(e.target.closest('#ld-btn'))return;
-  enterMain();
-});
-$('#ld-btn').addEventListener('click',enterMain);
-startLoader();
+    var isTotal = opt.isTotal;
+    if (!this.secArr) {
+        var percent = 25 * num / all;
+        if (num === all) {
+            this.secArr = true;
+        }
+    }
+    else {
+        percent = 25 + 75 * num / all;
+        if (num === all) {
+            delete this.secArr;
+        }
+    }
 
-/* ================= 粒子 ================= */
-const fxc=$('#fx'), fctx=fxc.getContext('2d');
-let parts=[];
-function sizeFx(){const r=app.getBoundingClientRect();const dpr=Math.min(2,window.devicePixelRatio||1);fxc.width=r.width*dpr;fxc.height=r.height*dpr;fctx.setTransform(dpr,0,0,dpr,0,0);}
-function initParts(){parts=[];const n=reduce?0:26;for(let i=0;i<n;i++){parts.push({x:Math.random()*app.clientWidth,y:app.clientHeight*.4+Math.random()*app.clientHeight*.6,r:.6+Math.random()*1.6,s:.12+Math.random()*.3,a:.15+Math.random()*.4,tw:Math.random()*6.28,dr:Math.random()<.25});}}
-function stepParts(t){
-  fctx.clearRect(0,0,app.clientWidth,app.clientHeight);
-  for(const p of parts){
-    p.y-=p.s;p.x+=Math.sin(t/900+p.tw)*.18;p.tw+=.006;
-    if(p.y<-8){p.y=app.clientHeight+8;p.x=Math.random()*app.clientWidth;}
-    const al=p.a*(.55+.45*Math.sin(t/700+p.tw*2));
-    fctx.beginPath();fctx.arc(p.x,p.y,p.r,0,6.28);
-    fctx.fillStyle=p.dr?'rgba(192,86,63,'+al+')':'rgba(230,206,151,'+al+')';
-    fctx.fill();
+    if (isTotal) percent = Math.floor(num / all * 100);
+
+    if (percent > this.prevPercent) {
+        var left = Math.round(86 * percent / 100);
+        var right = 86 - left;
+        this.node.querySelectorAll('.mugeda_percent')[0].style.cssText += 'border-left-width: ' + left + 'px; border-right-width: ' + right + 'px;';
+        this.prevPercent = percent;
+    }
+};
+Mugeda.loadProcessHandle['default'].prototype.remove = function () {
+    var self = this;
+    setTimeout(function () {
+        self.isOver = true;
+        self.prevPercent = 0;
+        self.node.parentNode.removeChild(self.node);
+    }, window['_mrmcp'] ? (window['_mrmcp']['loadRemovalDelay'] || 0) : 0);
+};
+window.lineSplit = "default-end";"bar-start";
+window.Mugeda = window.Mugeda || { data: {}};
+window.Mugeda.loadProcessHandle = window.Mugeda.loadProcessHandle || {};
+Mugeda.isMobile = navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i);
+
+Mugeda.loadProcessHandle.bar = function (opt) {
+    opt = opt || {};
+    var loadInfo = opt.loadInfo;
+    var thisAni = opt.thisAni;
+
+    this.type = 'bar';
+    this.dom = opt.stageDom || thisAni.dom;
+    loadInfo.backgroundImage = loadInfo.backgroundImage || ''//'http://ww3.sinaimg.cn/large/6efa645cjw1emifo2gt0dj21kw11x4la.jpg';
+    loadInfo.backgroundColor = (loadInfo.backgroundColor || 'black')//'yellow';
+    // 以/结尾的是css3_convertor转义的cdn地址，无实际图片
+    loadInfo.logoImage = loadInfo.logoImage ? (/\/$/.test(loadInfo.logoImage) ? '': loadInfo.logoImage): ''//'http://ww3.sinaimg.cn/large/6efa645cjw1emifo2gt0dj21kw11x4la.jpg';
+    loadInfo.progressColor = (loadInfo.progressColor || '#d60');
+    loadInfo.progressBackground = (loadInfo.progressBackground || '#fff');
+    loadInfo.progressPosition = loadInfo.progressPosition || '20';
+    loadInfo.messageText = loadInfo.messageText || '';
+    loadInfo.messageColor = (loadInfo.messageColor || '#fff');
+    loadInfo.messageSize = loadInfo.messageSize || 12;
+    loadInfo.textLoading = parseInt(loadInfo.textLoading) || 0;
+    loadInfo.logoWidth = Math.round(((loadInfo.logoWidth || 124) / (opt.thisAni.width / this.dom.parentNode.offsetWidth) * 100)) / 100;
+    this.loadInfo = loadInfo;
+};
+
+
+Mugeda.loadProcessHandle.bar.prototype.init = function (stage, pos) {
+    if (this.inited) return;
+    this.inited = true;
+    var ln = this.loadInfo;
+    var backStr = ln.backgroundColor;
+    if (ln.backgroundImage) {
+        backStr += " url('" + ln.backgroundImage + "') center center";
+    }
+
+    var text = ln.messageText;
+    if (ln.textLoading) {
+        text += ' <span class="mugeda_point1">.</span><span class="mugeda_point2">.</span><span class="mugeda_point3">.</span>';
+    }
+
+    if(pos == null){
+        pos = ['top:0;left:0;width:100%;height:100%;'];
+    }
+
+    var html = '<div style="' + pos[0] + 'z-index:20;position:absolute;background:' + backStr + ';background-repeat:no-repeat;background-size:' + (Mugeda.isMobile ? 'cover' : 'contain')+';">' +
+                    '<div style="position:absolute;top:' + ln.progressPosition + '%;width:100%">';
+    if (ln.logoImage) {
+        html += '<div style="text-align:center;"><img width="' + ln.logoWidth + '" src="' + ln.logoImage + '"/></div>';
+    }
+    html += '<div style="width:85px;height:2px;border-radius:3px;margin:12px auto;background:' + ln.progressBackground + ';"><div class="process_mugeda" style="width:0;height:100%; background:' + ln.progressColor + ';"></div></div>'
+    html += '<div style="text-align:center;padding: 6px;color:' + ln.messageColor + ';font-family:\'Microsoft YaHei\' SimHei Arial; font-size:' + ln.messageSize + 'px;">' + text + '</div>'
+    html += '<div>';
+    var dom = document.createElement('div');
+    dom.innerHTML = html;
+    this.node = dom.childNodes[0];
+    this.dom.parentNode.appendChild(this.node);
+    this.prevPercent = 0;
+
+    if (ln.textLoading) {
+        var num = 0;
+        var that = this;
+        var p0 = this.node.querySelectorAll('.mugeda_point1')[0];
+        var p1 = this.node.querySelectorAll('.mugeda_point2')[0];
+        var p2 = this.node.querySelectorAll('.mugeda_point3')[0];
+        var setPoint = function () {
+            p0.style.visibility = num > 0 ? 'visible' : 'hidden';
+            p1.style.visibility = num > 1 ? 'visible' : 'hidden';
+            p2.style.visibility = num > 2 ? 'visible' : 'hidden';
+            num++;
+            if (num == 4) num = 0;
+            if (!that.isOver) setTimeout(setPoint, 1000);
+        }
+
+        setPoint();
+    }
+
+};
+Mugeda.loadProcessHandle.bar.prototype.update = function (num, all, opt) {
+
+    opt = opt || {};
+
+    var isTotal = opt.isTotal;
+    if (!this.secArr) {
+        var percent = 25 * num / all;
+        if (num === all) {
+            this.secArr = true;
+        }
+    }
+    else {
+        percent = 25 + 75 * num / all;
+        if (num === all) {
+            delete this.secArr;
+        }
+    }
+
+    if (isTotal) percent = Math.floor(num / all * 100);
+
+    if (percent > this.prevPercent) {
+        this.node.querySelectorAll('.process_mugeda')[0].style.width = Math.min(100, percent) + '%';
+        this.prevPercent = percent;
+    }
+
+};
+Mugeda.loadProcessHandle.bar.prototype.remove = function () {
+    //return;
+    var self = this;
+    setTimeout(function(){
+       self.isOver = true;
+       self.prevPercent = 0;
+       self.node.parentNode.removeChild(self.node);
+    }, window['_mrmcp'] ? (window['_mrmcp']['loadRemovalDelay'] || 0) : 0);
+};
+window.lineSplit = "bar-end";
+
+window['_mrmcp'] = window['_mrmcp'] || {};
+if (/loader=(\w+)\&?/.test(location.search)) {
+    window['_mrmcp']['loader'] = RegExp.$1;
+}  
+ 
+if(!window['_mrmcp']['loader']){
+    var loadProcessHandleInstance = Mugeda['loadProcessHandleInstance'] = new Mugeda['loadProcessHandle']['default']({
+        'loadInfo': {"style":"default"},
+        'thisAni': {
+            'dom': null,
+            'width': 320
+        },
+        'stageDom': stageDom
+    });
+
+    if(['auto', 'landscape', 'portrait'].indexOf("") == -1) {
+        loadProcessHandleInstance.init();
+        var loadInitNum = 0;
+        var loadInterval = setInterval(function () {
+            loadProcessHandleInstance.update(loadInitNum, 100, {isTotal: true});
+            if (++loadInitNum > 10) clearInterval(loadInterval);
+        }, 100);
+    }    
+}
+
+
+    //window['Mugeda']['Loader'] = function (a, b, d, e, f, g) {
+window['Mugeda']['Loader'] = function (dom, hasScript, _mrmcp) {
+    var that = this;
+    that._mrmcp = _mrmcp;
+    that.crid = _mrmcp['creative_id'];
+    that.dom = dom;
+    that.resDir = _mrmcp['creative_path'] || "";
+    that.playerLoc = _mrmcp['common_path'] || that.resDir;
+
+    var jsPath = _mrmcp['script_sub_path'] || '';
+    if(jsPath != '')
+        jsPath += '/';
+
+    var isArray = function(o) {
+        return Object.prototype.toString.call(o) === '[object Array]';
+    };
+
+    var getServerIndex = function(str, total){
+        var len = str.length, sum = 0;
+        for(var i = 0; i < len && i < 6; i++){
+            sum += str.charCodeAt(len - i);
+        }
+        return sum & total;
+    };
+
+    if(!isArray(that.resDir)) that.resDir = [that.resDir];
+    if(!isArray(that.playerLoc)) that.playerLoc = [that.playerLoc];
+
+
+    var cachedLoadList = [];
+    var setTimeHandle = null;
+    var finalCallback = null;
+    var loadRes = function(type, file, deps, index, loadChk){
+        if(type == 0){
+            var pathList = that.playerLoc;
+        }
+        else{
+            pathList = that.resDir;
+        }
+
+        if(file.indexOf('mugeda_smart_renderer_core') >= 0)
+        file = file.replace('_core', '');
+        var path = pathList[getServerIndex(file, pathList.length)];
+        var filePath = path + file;
+
+        cachedLoadList[index == null ? cachedLoadList.length: index] = {file: filePath, deps: deps, loaded: 0, loadChk: loadChk};
+
+        if(!setTimeHandle){
+            setTimeHandle = setTimeout(function(){
+                setTimeHandle = null;
+                var loadNextGroup = function(){
+                    var notLoadedList = cachedLoadList.filter(function(item){return item.loaded < 2});
+                    if(notLoadedList.length == 0) {
+                        finalCallback();
+
+                    }
+                    else{
+                        notLoadedList.forEach(function(item){
+                            if(item.loaded != 0) return;
+                            if(item.deps.some(function(depIndex){
+                                return cachedLoadList[depIndex].loaded < 2;
+                            })){
+                                return;
+                            }
+                            var sc = document.createElement('script');
+                            sc.src = item.file;
+                            item.loaded = 1;
+                            sc.onload = function(){
+                                var next = function() {
+                                    item.loaded = 2;
+                                    loadNextGroup();
+                                };
+                                if(item.loadChk){
+                                    item.loadChk(next);
+                                }
+                                else next();
+                            };
+                            sc.onerror = function(){
+                                item.loaded = 3;
+                                console.log('err ' + item.file);
+                                loadNextGroup();
+                            };
+                            document.getElementsByTagName("head")[0].appendChild(sc);
+                        });
+                    }
+                };
+                loadNextGroup();
+            }, 0);
+        }
+
+    };
+
+
+    if(!Mugeda['css3PlayerLoaded']) {
+        var resPath = jsPath;
+        
+            loadRes(0, resPath + "mugeda_smart_renderer_core" + version + ".js", [], 0);
+        
+            loadRes(0, resPath + "mugeda_smart_renderer_slateText" + version + ".js", [0], 1);
+        
+        loadRes(0, resPath + "mugeda_utils" + version + ".js", [0]);
+        loadRes(1, jsPath + that.crid + ".js?publishTime=1792562550195", [], undefined, function(callback){
+            var chk = function(){
+                if(Mugeda.data["id_" + that.crid]) {
+                    callback();
+                }
+                else{
+                    setTimeout(chk, 100);
+                }
+            };
+            chk();
+
+        });
+        finalCallback = that.start.bind(that);
+    }
+};
+Mugeda.Loader.prototype.start = function () {
+    if (2 == Mugeda.css3PlayerLoaded) {
+        var a = document.createElement("div");
+        var node = this.dom;
+        while (node) {
+            if (node.tagName && node.tagName.toLowerCase() == 'body'){
+                break;
+            }
+            else {
+                node = node.parentNode;
+            }
+        }
+        if (node) {
+            this.dom.parentNode.insertBefore(a, this.dom);
+        }
+        else if (document.body) {
+            var track = document.getElementById('mugeda_track');
+            track.parentNode.appendChild(a);
+        }
+        if (_mrmcp['width'] != null) {
+            Mugeda.data['id_' + this.crid].wt = _mrmcp['width'];
+            Mugeda.data['id_' + this.crid].ht = _mrmcp['height'];
+        }
+        Mugeda['startAnimation']("id_" + this.crid, true ? "actions_" + this.crid + ".js?publishTime=1792562550195" : "", a, this.resDir, this.name, null, this._mrmcp)
+    }
+    else {
+        Mugeda.creationToBeLoad = Mugeda.creationToBeLoad || [];
+        Mugeda.creationToBeLoad.push(this)
+    }
+};
+
+
+
+    var loader = new Mugeda.Loader(stageDom, true, window._mrmcp || {});
+    loader.loadProcessHandleInstance = loadProcessHandleInstance;
+
+    var track_pixel = "";
+    var pixels = _mrmcp['additional_pixels']||[];
+    if(_mrmcp['impression_pixel']) pixels.push(_mrmcp['impression_pixel']);
+    for(var pIndex = 0; pIndex < pixels.length; pIndex++) {
+        var pixel = pixels[pIndex];
+        var valid = pixel.indexOf('%TRACKURL%') < 0;
+        if(valid){
+            var parTag = pixel.indexOf('?') < 0 ? '?' : '&';
+            pixel += parTag + "ts=" + (new Date()).getTime();
+            var search = window.location.search;
+            if (search){
+                var params = search.split('?')[1];
+                pixel += "&" + params;
+            }
+            track_pixel += "<img id='external_impression_tracker' style='display:none' src='"+pixel+"' />";
+        }
+    }
+
+    
+    var trackString = "\n<div id=\'mugeda_track\'>\n<script>\nvar _mrmma_campid = \'none\';\nvar _mrmma_urid = \'6aa8b7aa5ec16628d00ec574\';\nvar _mrmma_crid = \'6ad63028cea6dd8f23077e75\';\nvar _mrmma_title = \'锦织时序｜一梭织江南\';\nvar _mrmma_circle = \'mugeda\';\nvar _mrmma_width = \"320\";\nvar _mrmma_height = \"626\";\nvar _mrmma_type = \'smart\';\nvar title = \'锦织时序｜一梭织江南\';\ntitle = title.substr(0, Math.min(title.length, 32));\nvar _mrmma_var1 = \'campid=none&urid=6aa8b7aa5ec16628d00ec574&crid=6ad63028cea6dd8f23077e75\';\nvar _mrmma_var2 = \'circle=mugeda&type=smart&width=320&height=626&display=normal&title=\' + title;\nvar isLocal = !window.location || !window.location.host;\n<\/script>\n\n<script type=\'text\/javascript\'>\nvar ua = (function () {\nvar replacer = { \'Linux\': \'$L\', \'Windows\\\\s*Phone\': \'$W\', \'Windows\\\\s*NT\': \'$N\', \'Mac\\\\s*OS\': \'$O\', \'Android\': \'$A\', \'Mozilla\': \'$M\', \'Gecko\': \'$G\', \'Trident\': \'$T\', \'AppleWebKit\': \'$K\', \'Chrome\': \'$C\', \'Safari\': \'$S\', \'KHTML\': \'$H\', \'Version\': \'$V\', \'iPhone\': \'$I\', \'Mobile\': \'$B\', \'Build\': \'$b\', \'like\': \'$l\', \'MicroMessenger\': \'$g\', \'MugedaCard\': \'$m\', \';\\\\s+\': \';\', \',\\\\s+\': \',\', \'\\\\s+\\\\(\': \'(\', \'\\\\)\\\\s+\': \')\', \'\\\\s+\\\\[\': \'[\', \'\\\\]\\\\s+\': \']\', \'\\\\s*(\\\\$\\\\w+)\\\\s*\': \'$1\' };\nvar s = navigator.userAgent;\nfor (r in replacer) {\ns = s.replace(new RegExp(r, \'ig\'), replacer[r]);\n}\nreturn s;\n})();\nfunction getClientName() {\nvar ua = navigator.userAgent.toLowerCase();\nif (\/MicroMessenger\/i.test(ua)) return \'weixin\';\nelse if (window.mucard != null) return \'AppVer1\';\nelse if (ua.indexOf(\'mugedacard\') >= 0) return \'AppVer2\';\nelse return \'other\';\n}\nif(isLocal){\nvar track_url = \'http:\/\/cdn.mugeda.com\/media\/pages\/track\/track_20131030.html\' + \'?\' + _mrmma_var1 + \'&\' + _mrmma_var2;\nvar tracker = document.createElement(\'iframe\');\ntracker.id = \'6ad63028cea6dd8f23077e75\';\ntracker.src = track_url;\ntracker.style.display = \'none\';\ntracker.style.width = \'1px\';\ntracker.style.height = \'1px\';\nvar s = document.body.appendChild(tracker);\n}else{\nvar _gaq = _gaq || [];\n_gaq.push([\'_setAccount\', \'UA-38551434-1\']);\n_gaq.push([\'_setCustomVar\', 1, \'Identity Tags\', (typeof _mrmma_var1 == \'undefined\') ? \'none\' : _mrmma_var1]);\n_gaq.push([\'_setCustomVar\', 2, \'Property Tags\', (typeof _mrmma_var2 == \'undefined\') ? \'none\' : _mrmma_var2]);\n_gaq.push([\'_setCustomVar\', 3, \'Client\', getClientName()]);\n_gaq.push([\'_setCustomVar\', 4, \'User Agent\', ua]);\n_gaq.push([\'_trackPageview\']);\n(function() {\nvar ga = document.createElement(\'script\');\nga.type = \'text\/javascript\';\nga.async = true;\nga.src = _mrmcp[\'ga_url\'];\nvar s = document.getElementsByTagName(\'script\')[0];\ns.parentNode.insertBefore(ga, s);\n})();\n}\n<\/script>\n\n<\/div>\n" + track_pixel;
+    if (document.readyState == 'complete' || document.readyState == 'interactive') {
+        var div = document.createElement('div');
+        div.innerHTML = trackString;
+        loader.dom.parentNode.appendChild(div);
+        var scripts = div.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            if (scripts[i].src !== '') {
+                script.src = scripts[i].src;
+            } else {
+                script.text = scripts[i].text;
+            }
+            scripts[i].parentNode.removeChild(scripts[i]);
+            i--;
+            loader.dom.parentNode.appendChild(script);
+        }
+    }
+    else {
+        document.write(trackString);
+    }
+
+    if(_mrmcp['render_mode']!='embedded'&&_mrmcp['render_mode']!='inline'){
+        document.body.style.margin='0px';
+        document.body.style.padding='0px';
+        document.body.style.overflow='hidden';
+        document.body.style.backgroundColor='#fff';
+
+        document.body.style.height = "100%";
+        document.body.parentNode.style.height = "100%";
+    }
+
+    })();
+
+</script>
+    
+<script async defer>
+    window.mugedaOutsideStorage = true;
+</script>
+
+
+
+
+
+
+<script>
+  window.earliestCustomEvent = [];
+
+  var urlParams = new URL(location)['searchParams'];
+  var initCustomTriggerName =urlParams.get('init_custom_trigger_name');
+  initCustomTriggerName && window.earliestCustomEvent.push(initCustomTriggerName);
+
+  var captureCustomEvent = function(e) {
+      if (!e || !e.detail || !e.detail.customEventName) {
+          return;
+      }
+      window.earliestCustomEvent.push(e.detail.customEventName);
   }
-  if(!reduce)requestAnimationFrame(stepParts);
-}
-sizeFx();initParts();if(!reduce)requestAnimationFrame(stepParts);
-window.addEventListener('resize',()=>{sizeFx();if(mapInited)mapSize();});
+  
+  document.addEventListener('mugeda_custom', captureCustomEvent);
 
-/* ================= 章节导航 ================= */
-const CHS=['ch-journey','ch-map','ch-studio','ch-fin'];
-let cur=0, mapInited=false, obShown=false;
-function goChapter(i,soft){
-  i=Math.max(0,Math.min(CHS.length-1,i));
-  if(i===cur&&!soft)return;
-  cur=i;
-  $$('.ch').forEach(c=>c.classList.toggle('on',c.id===CHS[i]));
-  $$('#dock button').forEach(b=>b.classList.toggle('on',+b.dataset.ch===i));
-  if(i===1&&!mapInited)initMap();
-  if(i===2&&!obShown){obShown=true;$('#s-onboard').classList.remove('hide');}
-  if(i===3)renderGallery();
-  flashVeil();
-}
-$$('#dock button').forEach(b=>b.addEventListener('click',()=>goChapter(+b.dataset.ch)));
-$('#seal').addEventListener('click',()=>goChapter(0));
-$('#j-to-map').addEventListener('click',()=>goChapter(1));
-$('#f-restudio').addEventListener('click',()=>goChapter(2));
-$('#f-remap').addEventListener('click',()=>goChapter(1));
-$('#f-replay').addEventListener('click',()=>location.reload());
-$('#ob-go').addEventListener('click',()=>$('#s-onboard').classList.add('hide'));
-$('#s-onboard').classList.add('hide');
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight')goChapter(cur+1);
-  if(e.key==='ArrowLeft')goChapter(cur-1);
-});
-/* 左右滑动切章（排除地图/工坊/图册翻页区域） */
-let sx=0,sy=0,sDown=false;
-stage.addEventListener('pointerdown',e=>{
-  if(e.target.closest('#map-view,#studio-canvas,.librow,#modal,.mnode,#s-onboard,.g-track,.g-nav')){sDown=false;return;}
-  sx=e.clientX;sy=e.clientY;sDown=true;
-});
-stage.addEventListener('pointerup',e=>{
-  if(!sDown)return;sDown=false;
-  const dx=e.clientX-sx,dy=e.clientY-sy;
-  if(Math.abs(dx)>Math.abs(dy)*1.15&&Math.abs(dx)>60)goChapter(cur+(dx<0?1:-1));
-});
-stage.addEventListener('pointercancel',()=>{sDown=false;});
-
-/* ================= 第一章 · 织造之法（翻页图册） ================= */
-const gTrack=$('#g-track'), gDots=$('#g-dots'), gPage=$('#g-page'), gCta=$('#g-cta');
-const gPages=gTrack.querySelectorAll('.g-page-c');
-const gN=gPages.length;
-let gCur=0;
-const gPrev=$('#g-prev'), gNext=$('#g-next');
-function gGo(i){
-  gCur=Math.max(0,Math.min(gN-1,i));
-  gTrack.style.transform='translateX('+(-gCur*100)+'%)';
-  gPage.textContent=(gCur+1)+' / '+gN;
-  gPrev.disabled=gCur===0; gNext.disabled=gCur===gN-1;
-  gDots.querySelectorAll('i').forEach((d,k)=>d.classList.toggle('on',k===gCur));
-  gCta.classList.toggle('show',gCur===gN-1);
-}
-gPages.forEach((_,k)=>{
-  const d=document.createElement('i');
-  if(k===0)d.classList.add('on');
-  d.addEventListener('click',()=>gGo(k));
-  gDots.appendChild(d);
-});
-gPrev.addEventListener('click',()=>gGo(gCur-1));
-gNext.addEventListener('click',()=>gGo(gCur+1));
-gPrev.disabled=true;
-/* 图册内左右滑动翻页 */
-let gSX=0,gSD=false;
-gTrack.addEventListener('pointerdown',e=>{gSX=e.clientX;gSD=true;});
-gTrack.addEventListener('pointerup',e=>{
-  if(!gSD)return;gSD=false;
-  const dx=e.clientX-gSX;
-  if(Math.abs(dx)>55)gGo(gCur+(dx<0?1:-1));
-});
-gTrack.addEventListener('pointercancel',()=>{gSD=false;});
-document.addEventListener('keydown',e=>{
-  if(cur===0&&e.key==='ArrowRight')gGo(gCur+1);
-  if(cur===0&&e.key==='ArrowLeft')gGo(gCur-1);
-});
-
-/* ================= 模态 ================= */
-const modal=$('#modal'), mPanel=$('#md-panel');
-function openModal(html){mPanel.innerHTML=html;modal.classList.add('show');}
-function closeModal(){modal.classList.remove('show');}
-$('#md-mask').addEventListener('click',closeModal);
-document.addEventListener('click',e=>{
-  if(e.target.closest('.md-close'))closeModal();
-  if(e.target.closest('[data-node]')){e.stopPropagation();openNode(+e.target.closest('[data-node]').dataset.node);}
-  if(e.target.closest('[data-gowork]')){closeModal();const g=+e.target.closest('[data-gowork]').dataset.gowork;goChapter(2);requestAnimationFrame(()=>requestAnimationFrame(()=>presetStudio(g)));}
-  if(e.target.closest('[data-wv]')){openWork(JSON.parse(e.target.closest('[data-wv]').dataset.wv));}
-});
-
-/* ================= 第二章 · 山河纹志 ================= */
-const mapView=$('#map-view'), mapWorld=$('#map-world'), mmCv=$('#mm-canvas'), mmCtx=mmCv.getContext('2d');
-const MW=2400, MH=2000, MScale=.5;
-let ox=0, oy=0, mVelX=0, mVelY=0, mapDown=false;
-function mapSize(){
-  ox=Math.min(0,Math.max(mapView.clientWidth-MW*MScale,ox));
-  oy=Math.min(0,Math.max(mapView.clientHeight-MH*MScale,oy));
-  applyMap();
-}
-function applyMap(){
-  mapWorld.style.transform='translate('+ox+'px,'+oy+'px) scale('+MScale+')';
-  drawMini();updateLoc();
-}
-function drawMini(){
-  mmCtx.clearRect(0,0,96,70);
-  const sc=Math.min(96/MW,70/MH), mw=MW*sc, mh=MH*sc, mx=(96-mw)/2, my=(70-mh)/2;
-  mmCtx.fillStyle='#2B160B';mmCtx.fillRect(0,0,96,70);
-  mmCtx.fillStyle='rgba(76,47,23,.7)';mmCtx.fillRect(mx,my,mw,mh);
-  NODES.forEach(n=>{
-    mmCtx.beginPath();mmCtx.arc(mx+n.x*sc,my+n.y*sc,2.1,0,6.28);
-    mmCtx.fillStyle=n.img?'#E6CE97':'#C0563F';mmCtx.fill();
-  });
-  const vx=mx+(-ox/MScale)*sc, vy=my+(-oy/MScale)*sc;
-  const vw=mapView.clientWidth/MScale*sc, vh=mapView.clientHeight/MScale*sc;
-  mmCtx.strokeStyle='rgba(243,236,220,.85)';mmCtx.lineWidth=1;mmCtx.strokeRect(vx,vy,vw,vh);
-}
-function initMap(){
-  mapInited=true;
-  ox=mapView.clientWidth/2-1200*MScale; oy=mapView.clientHeight/2-1000*MScale;
-  mapSize();applyMap();
-  setTimeout(()=>{$('#m-firsthint').classList.add('hide');},2600);
-  $$('#map-world .md-sym').forEach(el=>{
-    el.innerHTML=SYMS[el.dataset.sym].svg.replace(/\bvar\(--e1\)/g,'#D8BC7E').replace(/\bvar\(--e2\)/g,'#A63B2A').replace(/\bvar\(--e3\)/g,'#F0DFB6');
-  });
-  $$('#map-world .mnode').forEach(n=>n.classList.add('hot'));
-}
-function updateLoc(){
-  const cx=(mapView.clientWidth/2-ox)/MScale, cy=(mapView.clientHeight/2-oy)/MScale;
-  let best=NODES[0],bd=1e9;
-  NODES.forEach(n=>{const d=(n.x-cx)*(n.x-cx)+(n.y-cy)*(n.y-cy);if(d<bd){bd=d;best=n;}});
-  $('#m-loc-txt').textContent=best.name+' · '+best.sub.split('·')[0].trim();
-}
-let mPX=0,mPY=0,mLastX=0,mLastY=0,mLastT=0;
-mapView.addEventListener('pointerdown',e=>{
-  if(e.target.closest('.mnode'))return;
-  mapDown=true;mVelX=0;mVelY=0;
-  mPX=e.clientX;mPY=e.clientY;mLastX=e.clientX;mLastY=e.clientY;mLastT=performance.now();
-  mapView.setPointerCapture(e.pointerId);
-});
-mapView.addEventListener('pointermove',e=>{
-  if(!mapDown)return;
-  const dx=e.clientX-mPX,dy=e.clientY-mPY;
-  ox+=dx;oy+=dy;mPX=e.clientX;mPY=e.clientY;
-  const now=performance.now(),dt=Math.max(1,now-mLastT);
-  mVelX=(e.clientX-mLastX)/dt*16;mVelY=(e.clientY-mLastY)/dt*16;
-  mLastX=e.clientX;mLastY=e.clientY;mLastT=now;
-  ox=Math.min(0,Math.max(mapView.clientWidth-MW*MScale,ox));
-  oy=Math.min(0,Math.max(mapView.clientHeight-MH*MScale,oy));
-  applyMap();
-});
-mapView.addEventListener('pointerup',()=>{mapDown=false;if(!reduce)momentum();});
-mapView.addEventListener('pointercancel',()=>{mapDown=false;});
-function momentum(){
-  let vx=mVelX,vy=mVelY;
-  if(Math.abs(vx)<.4&&Math.abs(vy)<.4)return;
-  (function step(){
-    vx*=.93;vy*=.93;
-    ox+=vx;oy+=vy;
-    ox=Math.min(0,Math.max(mapView.clientWidth-MW*MScale,ox));
-    oy=Math.min(0,Math.max(mapView.clientHeight-MH*MScale,oy));
-    applyMap();
-    if(Math.abs(vx)>.4||Math.abs(vy)>.4)requestAnimationFrame(step);
-  })();
-}
-function openNode(i){
-  const n=NODES[i];
-  const sym=n.img?'<img src="'+n.img+'" alt="'+n.title+'">':'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#4C2B14,#3B2212)">'+SYMS[n.sym].svg.replace(/\bvar\(--e1\)/g,n.colors[0]).replace(/\bvar\(--e2\)/g,n.colors[1]).replace(/\bvar\(--e3\)/g,n.colors[2])+'</div>';
-  openModal(
-    '<button class="md-close">×</button>'+
-    '<div class="md-hero">'+sym+'<span class="mh-pill">'+n.name+' · '+n.sub+'</span></div>'+
-    '<div class="md-body">'+
-      '<div class="md-title">'+n.title+'</div>'+
-      '<div class="md-meaning">'+n.meaning+'</div>'+
-      '<p class="md-story">'+n.story+'</p>'+
-      '<div class="md-colors">'+n.colors.map(c=>'<i style="background:'+c+'"></i>').join('')+'<span>纹样配色</span></div>'+
-    '</div>'+
-    '<div class="md-cta"><button data-gowork="'+i+'">以此纹入工坊</button><button class="md-close">收起</button></div>'
-  );
-}
-
-/* ================= 第三章 · 纹样工坊 ================= */
-const canvas=$('#studio-canvas');
-let els=[], selEl=null, ground=0, weave='solo', pal=0, elSeq=0;
-let undoStack=[], redoStack=[];
-function snap(){undoStack.push(JSON.stringify({els,ground,weave,pal,sel:selEl?selEl.id:null}));if(undoStack.length>40)undoStack.shift();redoStack=[];}
-function mkEl(sym,x,y,s,rot,flip,c){return {id:'e'+(++elSeq),sym,x,y,s,rot,flip,c:c.slice()};}
-function setElColors(d,c){d.style.setProperty('--e1',c[0]);d.style.setProperty('--e2',c[1]);d.style.setProperty('--e3',c[2]);}
-function elDom(e){
-  const d=document.createElement('div');d.className='sel';d.dataset.id=e.id;
-  d.style.left=e.x+'px';d.style.top=e.y+'px';
-  d.style.transform='translate(-50%,-50%) rotate('+e.rot+'deg) scale('+e.s+') scaleX('+(e.flip?-1:1)+')';
-  setElColors(d,e.c);
-  const icon=(LIG[e.sym]||'').replaceAll('var(--gold-soft)','var(--e1)')||SYMS[e.sym].svg;
-  d.innerHTML='<span style="display:block;width:100%;height:100%">'+icon+'</span>'+
-    '<div class="sel-bb"></div><i class="sel-knob k-tl"></i><i class="sel-knob k-tr"></i><i class="sel-knob k-bl"></i><i class="sel-knob k-br"></i>';
-  return d;
-}
-function renderAll(){
-  canvas.querySelectorAll('.sel').forEach(x=>x.remove());
-  els.forEach(e=>canvas.appendChild(elDom(e)));
-  $$('#studio-canvas .sel').forEach(d=>{
-    const e=els.find(x=>x.id===d.dataset.id);
-    const on=e.id===selEl?.id;
-    d.classList.toggle('on',on);
-    d.classList.toggle('dim',!!selEl&&!on);
-    d.style.left=e.x+'px';d.style.top=e.y+'px';
-    d.style.transform='translate(-50%,-50%) rotate('+e.rot+'deg) scale('+e.s+') scaleX('+(e.flip?-1:1)+')';
-    setElColors(d,e.c);
-  });
-  const tb=$('#s-toolbar');
-  tb.classList.toggle('t-off',!selEl);
-  if(selEl)$('#tb-name').textContent=SYMS[selEl.sym].name;
-  $('#s-empty').classList.toggle('hide',els.length>0);
-  updateSteps();
-}
-function updateSteps(){
-  const st=[els.length>0,els.length>0,els.length>0,weave!=='solo',false];
-  $$('.s-steps i').forEach((d,i)=>d.classList.toggle('on',st[i]));
-}
-const libRow=$('#librow');
-LIB.forEach(k=>{
-  const b=document.createElement('div');b.className='lib';b.dataset.lib=k;
-  b.innerHTML='<div class="lb-ico">'+(LIG[k]||SYMS[k].svg)+'</div><span>'+SYMS[k].name+'</span>';
-  b.addEventListener('click',()=>addEl(k));
-  libRow.appendChild(b);
-});
-function addEl(sym){
-  snap();
-  const w=canvas.clientWidth,h=canvas.clientHeight;
-  const e=mkEl(sym,w*(.3+Math.random()*.4),h*(.3+Math.random()*.4),.9+Math.random()*.5,Math.round(Math.random()*8)*15-60,false,PALS[pal].c);
-  els.push(e);selEl=e;
-  renderAll();
-  const d=canvas.querySelector('.sel[data-id="'+e.id+'"]');
-  if(d){d.classList.add('adding');d.style.setProperty('--rot',e.rot+'deg');}
-  toast('「'+SYMS[sym].name+'」已织入画布');
-  $('#s-onboard').classList.add('hide');
-}
-/* 画布指针：选择 / 拖动 / 双指缩放旋转 */
-const pts={};
-canvas.addEventListener('pointerdown',e=>{
-  const el=e.target.closest('.sel');
-  e.preventDefault();
-  const id=el?el.dataset.id:null;
-  pts[e.pointerId]={pid:e.pointerId,id,x:e.clientX,y:e.clientY};
-  if(id){
-    if(selEl?.id!==id){selEl=els.find(x=>x.id===id);renderAll();}
-    dragEl=id;dx0=e.clientX;dy0=e.clientY;
-  }else if(Object.keys(pts).length===1){selEl=null;renderAll();}
-});
-let dragEl=null,dx0=0,dy0=0;
-canvas.addEventListener('pointermove',e=>{
-  const p=pts[e.pointerId]; if(!p)return;
-  p.x=e.clientX;p.y=e.clientY;
-  const list=Object.values(pts);
-  if(list.length>=2){
-    const o=list.find(o=>o.pid!==e.pointerId);
-    if(!o)return;
-    const targetId=p.id||o.id||(selEl?selEl.id:null);
-    if(!targetId)return;
-    const e0=els.find(x=>x.id===targetId); if(!e0)return;
-    if(p._d==null){p._d=Math.hypot(p.x-o.x,p.y-o.y);o._d=p._d;p._a=Math.atan2(p.y-o.y,p.x-o.x);o._a=p._a;return;}
-    const nd=Math.hypot(p.x-o.x,p.y-o.y), na=Math.atan2(p.y-o.y,p.x-o.x);
-    e0.s=Math.min(3.2,Math.max(.25,e0.s*nd/p._d));
-    e0.rot+=((na-p._a)*180/Math.PI);
-    p._d=nd;o._d=nd;p._a=na;o._a=na;
-    selEl=e0;renderAll();
-    return;
+  window.cacelEarliestEvent = function() {
+      document.removeEventListener('mugeda_custom', captureCustomEvent);
   }
-  if(dragEl&&p.id){
-    const e0=els.find(x=>x.id===dragEl);
-    e0.x+=e.clientX-dx0;e0.y+=e.clientY-dy0;dx0=e.clientX;dy0=e.clientY;
-    const d=canvas.querySelector('.sel[data-id="'+dragEl+'"]');
-    if(d){d.style.left=e0.x+'px';d.style.top=e0.y+'px';}
+
+  // 根据url参数、sessionstorage和localstorage判断是否开启consoleLog
+  var consoleDebug = false;
+  if (URLSearchParams && location && (new URLSearchParams(location.search).get("consoleDebug"))) {
+    consoleDebug = true;
+  } else if (sessionStorage && (sessionStorage.getItem('consoleDebug'))) {
+    consoleDebug = true;
+  } else if (localStorage && localStorage.getItem('consoleDebug')) {
+    consoleDebug = true;
   }
-});
-['pointerup','pointercancel'].forEach(ev=>canvas.addEventListener(ev,e=>{
-  if(pts[e.pointerId]&&pts[e.pointerId].id)dragEl=null;
-  delete pts[e.pointerId];
-}));
-canvas.addEventListener('wheel',e=>{
-  if(!selEl)return;e.preventDefault();
-  selEl.s=Math.min(3.2,Math.max(.25,selEl.s*(e.deltaY<0?1.08:.92)));
-  renderAll();
-},{passive:false});
-/* 工具栏 */
-$$('#s-toolbar [data-act]').forEach(b=>b.addEventListener('click',()=>{
-  if(!selEl){toast('先在画布上选中一个纹样');return;}
-  snap();
-  const e=selEl, act=b.dataset.act;
-  if(act==='smaller')e.s=Math.max(.25,e.s*.88);
-  if(act==='bigger')e.s=Math.min(3.2,e.s*1.12);
-  if(act==='rotate')e.rot=(e.rot+22.5)%360;
-  if(act==='flip')e.flip*=-1;
-  if(act==='dup'){const n=mkEl(e.sym,e.x+26,e.y+26,e.s,e.rot,e.flip,e.c);els.push(n);selEl=n;}
-  if(act==='del'){els=els.filter(x=>x.id!==e.id);selEl=null;}
-  renderAll();
-}));
-const tc=$('#tb-colors');
-PALS.forEach((p,i)=>{
-  const b=document.createElement('button');b.dataset.pal=i;
-  b.style.background='linear-gradient(135deg,'+p.c[1]+','+p.c[0]+')';
-  b.innerHTML='<span>'+p.name+'</span>';
-  b.addEventListener('click',()=>{
-    if(!selEl){toast('先在画布上选中一个纹样');return;}
-    snap();pal=i;selEl.c=p.c.slice();renderAll();
-    tc.querySelectorAll('button').forEach(x=>x.classList.toggle('on',+x.dataset.pal===i));
-  });
-  tc.appendChild(b);
-});
-const gr=$('#ground-row');
-GROUNDS.forEach((g,i)=>{
-  const b=document.createElement('div');b.className='ground'+(i===0?' on':'');b.dataset.g=i;
-  b.innerHTML='<i style="background:'+g.c+'"></i><span>'+g.name+'</span>';
-  b.addEventListener('click',()=>{
-    snap();ground=i;
-    canvas.style.setProperty('--ground',g.c);
-    $$('#ground-row .ground').forEach(x=>x.classList.toggle('on',+x.dataset.g===i));
-    renderTile();
-  });
-  gr.appendChild(b);
-});
-$$('#weave-row .s-opt').forEach(b=>b.addEventListener('click',()=>{
-  snap();weave=b.dataset.weave;
-  $$('#weave-row .s-opt').forEach(x=>x.classList.toggle('on',x===b));
-  renderTile();updateSteps();
-}));
-/* 织法底纹 */
-function silkLines(ctx,W,H){ctx.strokeStyle='rgba(230,206,151,.05)';ctx.lineWidth=1;for(let i=0;i<W;i+=10){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke();}for(let i=0;i<H;i+=10){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(W,i);ctx.stroke();}}
-function svgDataUrl(sym,c){
-  let s=(LIG[sym]||'').replaceAll('var(--gold-soft)','var(--e1)')||SYMS[sym].svg;
-  if(!/xmlns=/.test(s))s=s.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ');
-  s=s.replace(/\bvar\(--e1\)/g,c[0]).replace(/\bvar\(--e2\)/g,c[1]).replace(/\bvar\(--e3\)/g,c[2]);
-  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
-}
-/* 预览图：缩小尺寸 + JPEG 0.85，避免大体积PNG撑爆localStorage、加快解码 */
-function toPreview(cv){
-  const w=540,h=675,out=document.createElement('canvas');
-  out.width=w;out.height=h;
-  const o=out.getContext('2d');
-  o.fillStyle='#3D2412';o.fillRect(0,0,w,h);
-  o.drawImage(cv,0,0,w,h);
-  return out.toDataURL('image/jpeg',0.85);
-}
-const _imgCache=new Map();
-function svgImg(sym,c){
-  const key=sym+'|'+c.join(',');
-  if(_imgCache.has(key))return _imgCache.get(key);
-  const p=new Promise(res=>{
-    const img=new Image();
-    img.onload=()=>res(img);
-    img.onerror=()=>res(null);
-    img.src=svgDataUrl(sym,c);
-  });
-  _imgCache.set(key,p);
-  return p;
-}
-async function drawElOnCtx(ctx,sym,c,cx,cy,size,rot,flip,alpha){
-  const img=await svgImg(sym,c);
-  if(!img)return;
-  ctx.save();ctx.globalAlpha=alpha==null?1:alpha;ctx.translate(cx,cy);ctx.rotate(rot||0);if(flip)ctx.scale(-1,1);
-  ctx.drawImage(img,-size/2,-size/2,size,size);ctx.restore();
-}
-/* 织法布局：独幅角花 / 二方骨架 / 四方错版 / 散点规律错排 */
-function drawSoloCorners(ctx,c,W,H){
-  const sz=Math.min(96,W*.11);
-  return Promise.all([
-    drawElOnCtx(ctx,'huiwen',c,sz,sz,sz,Math.PI/4,false,.78),
-    drawElOnCtx(ctx,'huiwen',c,W-sz,sz,sz,-Math.PI/4,false,.78),
-    drawElOnCtx(ctx,'huiwen',c,sz,H-sz,sz,-Math.PI/4,false,.78),
-    drawElOnCtx(ctx,'huiwen',c,W-sz,H-sz,sz,Math.PI/4,false,.78)
-  ]);
-}
-async function drawWeaveLayout(ctx,sym,c,W,H,weave){
-  if(weave==='er'){
-    const band=Math.min(40,W*.045);
-    for(let x=0;x<W;x+=46){await drawElOnCtx(ctx,'huiwen',c,x,band,band,0,false,.68);}
-    for(let x=0;x<W;x+=46){await drawElOnCtx(ctx,'huiwen',c,x,H-band,band,0,false,.68);}
-    for(let x=W*.08;x<W*.92;x+=360)await drawElOnCtx(ctx,sym,c,x,H/2,Math.min(250,W*.28),0,false,.92);
-  }else if(weave==='si'){
-    const step=Math.min(300,W*.34), gap=step/2, sz=Math.min(215,W*.24);
-    for(let row=0;row*step<H;row++){
-      const y=row*step+gap;
-      for(let col=0;col*step<W;col++){
-        const x=col*step+gap+(row%2?gap:0);
-        if(x>W-gap*.5||y>H-gap*.5)continue;
-        await drawElOnCtx(ctx,sym,c,x,y,sz,0,false,.92);
-        if((row+col)%2===0)await drawElOnCtx(ctx,'yun',c,x,y,sz*.32,0,false,.5);
+  
+  console.log = (function (oriLogFunc) {
+    return function () {
+      if (consoleDebug) {
+        oriLogFunc.apply(this, arguments);
       }
     }
-  }else if(weave==='san'){
-    const cols=4,rows=3;
-    for(let r=0;r<rows;r++){
-      const y=(H/(rows+1))*(r+1);
-      const off=(r%2)?(W/(cols+1))*.42:0;
-      for(let k=0;k<cols;k++){
-        const x=(W/(cols+1))*(k+1)+off;
-        const size=Math.min(210,W*.23)-(r%3)*14;
-        await drawElOnCtx(ctx,sym,c,x,y,size,(r%2?1:-1)*.18,false,.92);
-      }
-    }
-    const extra=sym==='yun'?'baoxiang':'yun';
-    for(let r=0;r<2;r++)for(let k=0;k<3;k++){
-      const x=W/2+((k-1)*W/3.4)+(r%2?W/12:0);
-      const y=r?H*.82:H*.18;
-      await drawElOnCtx(ctx,extra,c,x,y,Math.min(92,W*.1),0,false,.6);
-    }
-  }
-}
-let tileToken=0;
-async function renderTile(){
-  const tk=++tileToken;
-  const tile=$('#s-tile');
-  if(els.length===0){tile.style.backgroundImage='none';return;}
-  const src=selEl||els[els.length-1], c=src.c, sym=src.sym;
-  const cv=document.createElement('canvas');cv.width=cv.height=900;const ctx=cv.getContext('2d');
-  ctx.fillStyle=GROUNDS[ground].c;ctx.fillRect(0,0,900,900);
-  silkLines(ctx,900,900);
-  if(weave==='solo'){await drawSoloCorners(ctx,c,900,900);}
-  else{await drawWeaveLayout(ctx,sym,c,900,900,weave);}
-  if(tk===tileToken)tile.style.backgroundImage='url('+cv.toDataURL('image/png')+')';
-}
-/* 导出 */
-async function exportWork(){
-  const W=900,H=1125,cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
-  ctx.fillStyle=GROUNDS[ground].c;ctx.fillRect(0,0,W,H);
-  silkLines(ctx,W,H);
-  const src=selEl||els[els.length-1], sym=src?src.sym:'chan', c=src?src.c:PALS[0].c;
-  if(weave==='solo'){await drawSoloCorners(ctx,c,W,H);}
-  else{await drawWeaveLayout(ctx,sym,c,W,H,weave);}
-  const cw=canvas.clientWidth,chh=canvas.clientHeight,scx=W/cw,scy=H/chh;
-  for(const e of els)await drawElOnCtx(ctx,e.sym,e.c,e.x*scx,e.y*scy,150*e.s*scx,e.rot,e.flip,1);
-  const g=ctx.createRadialGradient(W/2,H*.42,W*.3,W/2,H*.5,W*.8);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(25,10,4,.38)');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  ctx.save();ctx.font='600 26px "Noto Serif SC","Songti SC",serif';ctx.fillStyle='rgba(230,206,151,.75)';
-  ctx.textAlign='right';ctx.fillText('锦织时序 · 织作',W-26,H-34);
-  ctx.font='500 16px "Noto Serif SC","Songti SC",serif';ctx.fillStyle='rgba(178,150,110,.6)';
-  ctx.fillText('BROCADE CHRONICLE',W-26,H-14);ctx.restore();
-  return toPreview(cv);
-}
-async function exportStandalone(arr,gr,mode,sym,colors){
-  const W=900,H=1125,cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
-  ctx.fillStyle=GROUNDS[gr].c;ctx.fillRect(0,0,W,H);
-  silkLines(ctx,W,H);
-  if(mode==='solo'){await drawSoloCorners(ctx,colors,W,H);}
-  else{await drawWeaveLayout(ctx,sym,colors,W,H,mode);}
-  const scx=W/440,scy=H/550;
-  for(const e of arr)await drawElOnCtx(ctx,e.sym,e.c,e.x*scx,e.y*scy,150*e.s*scx,e.rot,e.flip,1);
-  const g=ctx.createRadialGradient(W/2,H*.42,W*.3,W/2,H*.5,W*.8);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(25,10,4,.38)');
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  ctx.save();ctx.font='600 26px "Noto Serif SC","Songti SC",serif';ctx.fillStyle='rgba(230,206,151,.75)';
-  ctx.textAlign='right';ctx.fillText('锦织时序 · 织作',W-26,H-34);ctx.restore();
-  return toPreview(cv);
-}
-/* 完成织造 */
-$('#s-done').addEventListener('click',async ()=>{
-  if(!els.length){toast('画布还空着 · 先织入一枚纹样吧');return;}
-  const img=await exportWork();
-  openModal('<button class="md-close">×</button>'+
-    '<div class="md-name"><h3>落款入藏</h3><p>为你的织作取一个名字<br>它将以「数字供养人」之名，入藏织造馆</p>'+
-    '<div class="mn-prev"><img src="'+img+'" alt="织作预览"></div>'+
-    '<input id="w-name" maxlength="12" placeholder="如：缠枝如意锦"></div>'+
-    '<div class="md-cta"><button class="md-close">再调整</button><button class="primary" id="w-save">保存入藏</button></div>');
-  $('#w-save').addEventListener('click',()=>{
-    const name=$('#w-name').value.trim()||'无名织作';
-    const works=JSON.parse(localStorage.getItem('bc_works')||'[]');
-    const weaveName={solo:'独幅',er:'二方连续',si:'四方连续',san:'散点花'}[weave];
-    works.unshift({name,img,weave:weaveName,date:new Date().toLocaleDateString('zh-CN')});
-    localStorage.setItem('bc_works',JSON.stringify(works));
-    closeModal();toast('已入藏数字织造馆');
-    goChapter(3);
-  });
-});
-/* 撤销 / 重做 / 清空 */
-function restoreState(s){
-  const st=JSON.parse(s);
-  els=st.els;ground=st.ground;weave=st.weave;pal=st.pal;
-  canvas.style.setProperty('--ground',GROUNDS[ground].c);
-  $$('#ground-row .ground').forEach(x=>x.classList.toggle('on',+x.dataset.g===ground));
-  $$('#weave-row .s-opt').forEach(x=>x.classList.toggle('on',x.dataset.weave===weave));
-  $$('#tb-colors button').forEach(x=>x.classList.toggle('on',+x.dataset.pal===pal));
-  selEl=st.sel?els.find(x=>x.id===st.sel)||null:null;
-  renderAll();renderTile();
-}
-$('#s-undo').addEventListener('click',()=>{
-  if(!undoStack.length){toast('无可撤销');return;}
-  redoStack.push(JSON.stringify({els,ground,weave,pal,sel:selEl?selEl.id:null}));
-  restoreState(undoStack.pop());
-});
-$('#s-redo').addEventListener('click',()=>{
-  if(!redoStack.length){toast('无可重做');return;}
-  undoStack.push(JSON.stringify({els,ground,weave,pal,sel:selEl?selEl.id:null}));
-  restoreState(redoStack.pop());
-});
-$('#s-clear').addEventListener('click',()=>{
-  if(!els.length){toast('画布已空');return;}
-  snap();els=[];selEl=null;renderAll();renderTile();
-});
-function presetStudio(i){
-  const n=NODES[i];
-  els=[];selEl=null;ground=0;pal=0;weave='solo';
-  canvas.style.setProperty('--ground',GROUNDS[0].c);
-  const w=canvas.clientWidth,h=canvas.clientHeight;
-  const e=mkEl(n.sym,w*.5,h*.42,1.15,0,false,[n.colors[0],n.colors[1],n.colors[2]]);
-  els.push(e);selEl=e;
-  $$('#weave-row .s-opt').forEach(x=>x.classList.toggle('on',x.dataset.weave==='solo'));
-  $$('#ground-row .ground').forEach(x=>x.classList.toggle('on',+x.dataset.g===0));
-  renderAll();renderTile();
-  toast('已为你备好「'+n.title+'」· 开织吧');
-}
-
-/* ================= 第四章 · 锦成 ================= */
-let sampleBuilt=false, sampleCache=[];
-function renderGallery(){
-  const works=JSON.parse(localStorage.getItem('bc_works')||'[]');
-  $('#f-count-txt').textContent=works.length;
-  const gal=$('#f-gallery');gal.innerHTML='';
-  if(works.length){
-    renderCards(works,false);
-  }else if(sampleBuilt){
-    renderCards(sampleCache,true);
-  }else{
-    renderSkeleton();
-    buildSamples().then(sams=>{sampleBuilt=true;sampleCache=sams;renderCards(sams,true);});
-  }
-}
-function renderSkeleton(){
-  const gal=$('#f-gallery');gal.innerHTML='';
-  for(let i=0;i<2;i++){
-    const c=document.createElement('div');c.className='f-card';
-    c.innerHTML='<div class="fc-img" style="background:linear-gradient(160deg,#4C2B14,#33200F);display:flex;align-items:center;justify-content:center;color:#96724E;font-size:10px;letter-spacing:.3em">织锦中</div><div class="fc-bd"><b style="color:#96724E">馆藏示范 · 织造中</b><span>请稍候</span></div>';
-    gal.appendChild(c);
-  }
-}
-function renderCards(list,demo){
-  const gal=$('#f-gallery');gal.innerHTML='';
-  list.forEach((w,i)=>{
-    const idx=demo?'馆藏·'+String(i+1).padStart(3,'0'):'BC-'+String(i+1).padStart(4,'0');
-    const c=document.createElement('div');c.className='f-card';
-    c.dataset.wv=JSON.stringify(w);
-    c.innerHTML='<div class="fc-img"><img src="'+w.img+'" alt="'+w.name+'"><span class="fc-no">'+idx+'</span>'+
-      (!demo?'<button class="fc-del" aria-label="删除此作">×</button>':'')+
-      '<span class="fc-tag">'+w.weave+'</span></div>'+
-      '<div class="fc-bd"><b>'+(w.name||'无名织作')+'</b><span>'+(demo?'馆藏示范':'你的织作')+' · '+w.date+'</span></div>';
-    if(!demo){
-      c.querySelector('.fc-del').addEventListener('click',e=>{
-        e.stopPropagation();
-        let ws=JSON.parse(localStorage.getItem('bc_works')||'[]');
-        ws=ws.filter(x=>x.img!==w.img);
-        localStorage.setItem('bc_works',JSON.stringify(ws));
-        toast('「'+(w.name||'无名织作')+'」已移出织造馆');
-        renderGallery();
-      });
-    }
-    gal.appendChild(c);
-  });
-}
-async function buildSamples(){
-  const s1=await exportStandalone([{sym:'chan',x:220,y:275,s:1.2,rot:0,flip:false,c:PALS[0].c}],0,'si','chan',PALS[0].c);
-  const s2=await exportStandalone([
-    {sym:'mudan',x:300,y:235,s:1.05,rot:14,flip:false,c:PALS[1].c},
-    {sym:'yun',x:115,y:395,s:.9,rot:0,flip:false,c:PALS[1].c},
-    {sym:'fu',x:335,y:430,s:.85,rot:-10,flip:true,c:PALS[1].c}
-  ],1,'san','mudan',PALS[1].c);
-  return [
-    {name:'缠枝如意锦',weave:'四方连续',img:s1,date:'宋锦谱系'},
-    {name:'凤穿富贵花',weave:'散点花',img:s2,date:'缂丝谱系'}
-  ];
-}
-function openWork(w){
-  openModal('<button class="md-close">×</button>'+
-    '<div style="padding:16px 18px 0"><div class="fw-hero"><img src="'+w.img+'" alt="'+(w.name||'织作')+'"></div>'+
-    '<div class="fw-info"><b>'+(w.name||'无名织作')+'</b><p>'+w.weave+' · '+(w.date||'')+'</p></div></div>'+
-    '<div class="md-cta"><button id="w-share">分享织作</button><button class="md-close">收起</button></div>');
-  $('#w-share').addEventListener('click',()=>{
-    const text='我在《锦织时序》织了一匹「'+(w.name||'无名织作')+'」· '+w.weave+'\n一起来织梦：'+location.href;
-    if(navigator.share){navigator.share({title:'锦织时序 · 织作',text}).catch(()=>{});}
-    else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>toast('织作信息已复制，去分享吧')).catch(()=>toast('复制失败，请手动复制'));}
-    else toast('长按复制页面链接即可分享');
-  });
-}
-})();
+  })(console.log);
 </script>
 </body>
 </html>
